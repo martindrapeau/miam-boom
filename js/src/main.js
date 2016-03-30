@@ -10,15 +10,9 @@ window.START = function() {
   
   var canvas = document.getElementById("foreground"),
       context = canvas.getContext("2d");
-      
-  canvas.height = Math.round(Math.min(canvas.height, Math.max(window.innerHeight, window.innerWidth)));
-  if (MOBILE) {
-    //canvas.height = Math.round(Math.min(canvas.height, canvas.width * Math.min(window.innerHeight, window.innerWidth) / Math.max(window.innerHeight, window.innerWidth) ));
-  } else {
-    //canvas.height = Math.round(Math.min(canvas.height, window.innerHeight));
-    adjustViewport(canvas, canvas.width, canvas.height);
-  }
+
   console.log("canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
+  console.log("window.innerWidth=" + window.innerWidth + " window.innerHeight=" + window.innerHeight);
 
   _.extend(Backbone, {
     ENV: ENV,
@@ -81,7 +75,18 @@ window.START = function() {
         audio.trigger("attach");
       });
 
+      window.addEventListener("resize", _.debounce(this.onResize.bind(this), 300));
+      setTimeout(this.onResize.bind(this), 10);
+
       this.setup();
+    },
+    onResize: function() {
+      canvas.height = Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) );
+      console.log("resize: canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
+      Backbone.HEIGHT = canvas.height;
+      this.world.set({height: Backbone.HEIGHT});
+      var hero = this.world.getHero();
+      if (hero) hero.set({y: Backbone.HEIGHT - 50 - hero.get("height")});
     },
     setup: function() {
 
