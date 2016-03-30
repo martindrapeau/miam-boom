@@ -11,12 +11,7 @@ window.START = function() {
   var canvas = document.getElementById("foreground"),
       context = canvas.getContext("2d");
 
-  if (MOBILE) {
-    canvas.height = Math.round(Math.min(canvas.height, canvas.width * Math.min(window.innerHeight, window.innerWidth) / Math.max(window.innerHeight, window.innerWidth) ));
-  } else {
-    canvas.height = Math.round(Math.min(canvas.height, window.innerHeight));
-    adjustViewport(canvas, canvas.width, canvas.height);
-  }
+  canvas.height = Math.round(Math.min(canvas.height, Math.max(window.innerHeight, window.innerWidth)));
   console.log("canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
 
   _.extend(Backbone, {
