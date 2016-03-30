@@ -46,7 +46,7 @@ window.START = function() {
       this.spriteSheets = new Backbone.SpriteSheetCollection(Backbone.spriteSheetDefinitions).attachToSpriteClasses();
 
       // Create the debug panel
-      this.debugPanel = ENV == "dev" ? new Backbone.DebugPanel({}, {color: "#fff"}) : null;
+      //this.debugPanel = ENV == "dev" ? new Backbone.DebugPanel({}, {color: "#fff"}) : null;
 
       // Our world
       this.world = new Backbone.World({
