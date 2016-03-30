@@ -81,12 +81,12 @@ window.START = function() {
       this.setup();
     },
     onResize: function() {
-      canvas.height = Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) );
+      canvas.height = Backbone.MOBILE ? Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) ) : Math.min(window.innerHeight, 568);
       console.log("resize: canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
       Backbone.HEIGHT = canvas.height;
       this.world.set({height: Backbone.HEIGHT});
       var hero = this.world.getHero();
-      if (hero) hero.set({y: Backbone.HEIGHT - 50 - hero.get("height")});
+      if (hero) hero.set({y: Backbone.HEIGHT - 100 - hero.get("height")});
     },
     setup: function() {
 
