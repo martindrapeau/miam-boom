@@ -2,7 +2,7 @@
   
 	Backbone.Miam = Backbone.Sprite.extend({
     defaults: {
-      type: "character",
+      type: "miam",
       name: "miam",
       hero: true,
       spriteSheet: "miam",
@@ -10,8 +10,7 @@
       x: 0,
       y: 0,
       width: 200,
-      height: 200,
-      static: false
+      height: 200
     },
     animations: {
       idle: {

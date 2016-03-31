@@ -85,8 +85,18 @@ window.START = function() {
       console.log("resize: canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
       Backbone.HEIGHT = canvas.height;
       this.world.set({height: Backbone.HEIGHT});
-      var hero = this.world.getHero();
-      if (hero) hero.set({y: Backbone.HEIGHT - 100 - hero.get("height")});
+
+      this.world.sprites.each(function(sprite) {
+        var name = sprite.get("name");
+        switch(name) {
+          case "miam":
+            sprite.set({y: Backbone.HEIGHT - 100 - sprite.get("height")});
+            break;
+          case "florr":
+            sprite.set({y: Backbone.HEIGHT - sprite.get("height")});
+            break;
+        }
+      });
     },
     setup: function() {
 
@@ -98,6 +108,10 @@ window.START = function() {
         width: Backbone.WIDTH,
         height: Backbone.HEIGHT,
         sprites: [{
+          name: "floor",
+          x: 0,
+          y: Backbone.HEIGHT - Backbone.Floor.prototype.defaults.height
+        }, {
           name: "miam",
           x: Backbone.WIDTH/2 - Backbone.Miam.prototype.defaults.width/2,
           y: Backbone.HEIGHT - 50 - Backbone.Miam.prototype.defaults.height,
