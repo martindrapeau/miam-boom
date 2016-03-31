@@ -130,7 +130,21 @@ window.START = function() {
 
       this.world.set("state", "play");
 
+      this.listenTo(this.world, "tap", this.onTap);
+
       return this;
+    },
+    onTap: function(e) {
+      var fruitName = Backbone.fruitNames[Math.floor(8*Math.random())],
+          fruitClass = Backbone[_.classify(fruitName)],
+          fruit = new fruitClass({
+            x: Backbone.WIDTH/2 - fruitClass.prototype.defaults.width/2,
+            y: 100,
+            state: "fall-left",
+            velocity: 0,
+            yVelocity: -100
+          });
+      this.world.add(fruit);
     },
     handleSetLanguage: function(language) {
       var deviceLang = Backbone.storage[Backbone.LSKEY_DEVICE_LANG],

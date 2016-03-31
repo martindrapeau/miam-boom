@@ -147,11 +147,11 @@
       defaults: _.extend({}, Backbone.Fruit.prototype.defaults, {
         name: name
       }),
-      animations: _.map(Backbone.Fruit.prototype.animations, function(animation) {
-        return _.extend({}, animation, {
+      animations: _.object(_.map(Backbone.Fruit.prototype.animations, function(animation, name) {
+        return [name, _.extend({}, animation, {
           sequences: sequences
-        });
-      })
+        })];
+      }))
     });
   }
 
