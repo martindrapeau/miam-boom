@@ -3,13 +3,12 @@
   Backbone.Floor = Backbone.Sprite.extend({
     defaults: _.extend({}, Backbone.Sprite.prototype.defaults, {
       name: "floor",
-      type: "barrier",
+      type: "floor",
       state: "idle",
       collision: true,
-      collideWith: undefined,
       static: true,
       width: 320,
-      height: 140,
+      height: 128,
       paddingTop: 20,
       backgroundColor: "#101044",
       scale: 1

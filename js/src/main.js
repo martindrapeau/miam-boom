@@ -114,8 +114,7 @@ window.START = function() {
         }, {
           name: "miam",
           x: Backbone.WIDTH/2 - Backbone.Miam.prototype.defaults.width/2,
-          y: Backbone.HEIGHT - 50 - Backbone.Miam.prototype.defaults.height,
-          state: "idle"
+          y: Backbone.HEIGHT - 50 - Backbone.Miam.prototype.defaults.height
         }]
       });
       this.world.spawnSprites();
@@ -137,13 +136,17 @@ window.START = function() {
     onTap: function(e) {
       var fruitName = Backbone.fruitNames[Math.floor(8*Math.random())],
           fruitClass = Backbone[_.classify(fruitName)],
-          fruit = new fruitClass({
-            x: Backbone.WIDTH/2 - fruitClass.prototype.defaults.width/2,
-            y: 100,
-            state: "fall-left",
-            velocity: 0,
-            yVelocity: -100
-          });
+          halfWidth = fruitClass.prototype.defaults.width/2,
+          dir = Math.random() < 0.5 ? "right" : "left",
+          x =  dir == "right" ? -halfWidth : Backbone.WIDTH-halfWidth,
+          y = Math.round(100*Math.random()),
+          yVelocity = Math.round(-500*Math.random());
+      var fruit = new fruitClass({
+        x: x,
+        y: y,
+        state: fruitClass.prototype.buildState("fall", dir),
+        yVelocity: yVelocity
+      });
       this.world.add(fruit);
     },
     handleSetLanguage: function(language) {

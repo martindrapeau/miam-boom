@@ -98,9 +98,10 @@
   animations["fall-attack-left"] = _.extend({velocity: -attackVelocity}, animations["fall-left"], attackAnimation);
   animations["fall-attack-right"] = _.extend({velocity: attackVelocity}, animations["fall-right"], attackAnimation);
 
-  Backbone.Fruit = Backbone.Sprite.extend({
-    defaults: _.extend({}, Backbone.Sprite.prototype.defaults, {
+  Backbone.Fruit = Backbone.Character.extend({
+    defaults: _.extend({}, Backbone.Character.prototype.defaults, {
       type: "fruit",
+      name: undefined,
       spriteSheet: "fruits",
       width: 70,
       height: 70,
@@ -109,37 +110,27 @@
       paddingBottom: 4,
       paddingLeft: 4,
       paddingRight: 4,
-      collision: true,
-      collideWith: ["character", "barrier"],
+      collision: false,
+      collideWith: [],
       health: 1,
       attackDamage: 1,
       aiDelay: 250,
-      bounce: true
+      bounce: false,
+      alwaysUpdate: true,
+      ceiling: -100
     }),
     animations: animations,
-    onUpdate: undefined,
-    hit: function(sprite, dir, dir2) {
-      var cur = this.getStateInfo(),
-          opo = _.opo(dir);
+    knockout: function(sprite, dir) {
+      this.clearAnimation();
+      
+      _.defer(function() {
+        this.world.remove(this);
+      }.bind(this));
 
-      if (this._handlingSpriteHit || cur.mov == "ko" || cur.mov2 == "hurt") return this;
-      this._handlingSpriteHit = sprite;
-
-      if (sprite.get("name") == "floor") {
-        this.cancelUpdate = true;
-        var attackDamage = sprite.get("attackDamage") || 0;
-        this.set({health: Math.max(this.get("health") - attackDamage, 0)}, {sprite: sprite, dir: dir, dir2: dir2});
-        this.trigger("action", "hit");
-      } else if (sprite.get("hero")) {
-        this.cancelUpdate = true;
-        this.trigger("action", "eaten");
-      }
-
-      sprite.trigger("hit", this, opo);
-
-      this._handlingSpriteHit = undefined;
+      this.cancelUpdate = true;
+      this.trigger("action", "knockout");
       return this;
-    }
+    },
   });
 
   function createFruit(name, sequences) {

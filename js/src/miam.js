@@ -2,15 +2,20 @@
   
 	Backbone.Miam = Backbone.Sprite.extend({
     defaults: {
-      type: "miam",
       name: "miam",
+      type: "miam",
       hero: true,
       spriteSheet: "miam",
       state: "idle",
       x: 0,
       y: 0,
       width: 200,
-      height: 200
+      height: 200,
+      paddingLeft: 30,
+      paddingRight: 60,
+      paddingTop: 130,
+      paddingBottom: 60,
+      attackDamage: 1
     },
     animations: {
       idle: {
@@ -40,6 +45,26 @@
     },
     closeMouth: function() {
       this.set("state", "idle");
+    },
+    isAttacking: function() {
+      return this.get("state") == "open";
+    },
+    onUpdate: function(dt) {
+      var state = this.get("state");
+
+      if (state == "open") {
+        var b = {
+          x: this.get("x") + this.get("paddingLeft"),
+          y: this.get("y") + this.get("paddingTop"),
+          width: this.getWidth(true),
+          height: this.getHeight(true)
+        };
+        var sprites = this.world.filterAt(b, undefined, "fruit");
+        for (var i = 0; i < sprites.length; i++)
+          sprites[i].trigger("hit", this, "top");
+      }
+
+      return true;
     }
   });
 
