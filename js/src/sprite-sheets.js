@@ -8,7 +8,7 @@
     y: 0,
     tileWidth: 150,
     tileHeight: 150,
-    tileColumns: 3,
+    tileColumns: 4,
     tileRows: 1
   }, {
     id: "fruits",

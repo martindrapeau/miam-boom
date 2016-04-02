@@ -52,6 +52,35 @@ window.START = function() {
       this.world = new Backbone.World({
         state: "pause"
       });
+      this.world.sprites.on("remove", this.onWorldSpriteRemoved, this);
+
+      this.startButton = new Backbone.LabelButton({
+        x: Backbone.WIDTH/2 - Backbone.LabelButton.prototype.defaults.width/2,
+        y: 100,
+        text: "START"
+      });
+      this.startButton.on("tap", this.start, this);
+
+      this.pauseButton = new Backbone.LabelButton({
+        x: 10,
+        y: 0,
+        width: 80,
+        height: 50,
+        text: "PAUSE",
+        textContextAttributes: _.extend({}, Backbone.LabelButton.prototype.defaults.textContextAttributes, {
+          font: "20px arcade"
+        })
+      });
+      this.pauseButton.on("tap", this.pause, this);
+
+      this.fruitLabel = new Backbone.Label({
+        x: Backbone.WIDTH - 10 - Backbone.Label.prototype.defaults.width,
+        y: 0,
+        text: 0
+      });
+      this.world.on("change:fruits", function() {
+        this.fruitLabel.set("text", this.world.get("fruits"));
+      }, this);
 
       // Lots of fruits and bombs, but only one clock
       this.fruitNames = _.without(Backbone.fruitNames, "clock");
@@ -83,6 +112,7 @@ window.START = function() {
       setTimeout(this.onResize.bind(this), 10);
 
       this.setup();
+      this.pause();
     },
     onResize: function() {
       canvas.height = Backbone.MOBILE ? Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) ) : Math.min(window.innerHeight, 568);
@@ -118,8 +148,10 @@ window.START = function() {
         }, {
           name: "miam",
           x: Backbone.WIDTH/2 - Backbone.Miam.prototype.defaults.width/2,
-          y: Backbone.HEIGHT - 50 - Backbone.Miam.prototype.defaults.height
-        }]
+          y: Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height
+        }],
+        fruits: 0,
+        time: 15000
       });
       this.world.spawnSprites();
       this.world.getHero().debugPanel = this.debugPanel;
@@ -127,18 +159,35 @@ window.START = function() {
       this.engine.reset();
       if (this.debugPanel) this.debugPanel.clear();
 
-      this.engine.add(this.world);
+      this.engine.add([this.world, this.fruitLabel]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
       this.engine.set("clearOnDraw", true);
       this.engine.start();
 
       this.world.set("state", "play");
 
-      this.listenTo(this.world, "tap", this.onTap);
+      this.listenTo(this.engine, "touchstart", this.throwFruit);
+      this.listenTo(this.engine, "touchend", this.throwFruit);
 
       return this;
     },
-    onTap: function(e) {
+    pause: function() {
+      this.world.set("state", "pause");
+      this.stopListening(this.engine, "touchstart");
+      this.stopListening(this.engine, "touchend");
+      this.engine.remove(this.pauseButton);
+      this.engine.add(this.startButton);
+    },
+    start: function() {
+      this.setup();
+      this.engine.add(this.pauseButton);
+    },
+    throwFruit: function(e) {
+      if (e.canvasY < Backbone.HEIGHT/3) return;
+
+      var hero = this.world.getHero();
+      if (!hero || hero.isDisabled()) return;
+
       var index = Math.floor((this.fruitNames.length-0.01)*Math.random()),
           fruitName = this.fruitNames[index],
           fruitClass = Backbone[_.classify(fruitName)],
@@ -147,13 +196,41 @@ window.START = function() {
           x =  dir == "right" ? -halfWidth : Backbone.WIDTH-halfWidth,
           y = Math.round(100*Math.random()),
           yVelocity = Math.round(-500*Math.random());
+
       var fruit = new fruitClass({
         x: x,
         y: y,
         state: fruitClass.prototype.buildState("fall", dir),
         yVelocity: yVelocity
       });
+
       this.world.add(fruit);
+    },
+    onWorldSpriteRemoved: function(sprite, world, options) {
+      var name = sprite.get("name"),
+          type = sprite.get("type"),
+          hero = this.world.getHero();
+
+      if (type != "fruit" || !hero || hero.isDisabled()) return;
+
+      if (options && options.eaten) {
+        if (name == "bomb") {
+          hero.set("state", "dead");
+          this.world.setTimeout(this.pause.bind(this), 1500);
+          return;
+        }
+
+        var fruits = this.world.get("fruits") + 1;
+        this.world.set("fruits", fruits);
+        this.fruitLabel.set("text", fruits);
+        return;
+      }
+
+      if (name != "bomb" && name != "clock") {
+        hero.set("state", "sad");
+        this.world.setTimeout(this.pause.bind(this), 1500);
+      }
+
     },
     handleSetLanguage: function(language) {
       var deviceLang = Backbone.storage[Backbone.LSKEY_DEVICE_LANG],

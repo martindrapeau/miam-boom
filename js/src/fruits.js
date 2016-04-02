@@ -124,7 +124,7 @@
       this.clearAnimation();
       
       _.defer(function() {
-        this.world.remove(this);
+        this.world.remove(this, {eaten: true});
       }.bind(this));
 
       this.cancelUpdate = true;

@@ -29,6 +29,10 @@
       dead: {
         sequences: [2],
         delay: 50
+      },
+      sad: {
+        sequences: [3],
+        delay: 50
       }
     },
     onAttach: function() {
@@ -40,17 +44,25 @@
     onDetach: function() {
       this.stopListening(this.engine);
     },
-    openMouth: function() {
+    openMouth: function(e) {
+      if (this.isDisabled() || e.canvasY < Backbone.HEIGHT/3) return;
+      if (!this.world || this.world.get("state") != "play") return true;
       this.set("state", "open");
     },
-    closeMouth: function() {
+    closeMouth: function(e) {
+      if (this.isDisabled()) return;
+      if (!this.world || this.world.get("state") != "play") return true;
       this.set("state", "idle");
+    },
+    isDisabled: function() {
+      var state = this.get("state");
+      return state == "dead" || state == "sad";
     },
     isAttacking: function() {
       return this.get("state") == "open";
     },
     onUpdate: function(dt) {
-      if (!this.world) return true;
+      if (!this.world || this.world.get("state") != "play") return true;
 
       var state = this.get("state"),
           x = this.get("x"),
@@ -63,10 +75,12 @@
       if (state == "open") {
 
         // Move
-        var centerX = Math.round(this.engine._currX);
-        if (centerX < minX) centerX = minX;
-        if (centerX > maxX) centerX = maxX;
-        attrs.x = x = centerX - width/2;
+        if (this.engine._currY > Backbone.HEIGHT/3) {
+          var centerX = Math.round(this.engine._currX);
+          if (centerX < minX) centerX = minX;
+          if (centerX > maxX) centerX = maxX;
+          attrs.x = x = centerX - width/2;
+        }
 
         // Eat stuff
         var b = {
