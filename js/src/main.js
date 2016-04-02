@@ -53,6 +53,7 @@ window.START = function() {
         state: "pause"
       });
       this.world.sprites.on("remove", this.onWorldSpriteRemoved, this);
+      this.world.sprites.on("landed", this.onFruitLanded, this);
 
       this.startButton = new Backbone.LabelButton({
         x: Backbone.WIDTH/2 - Backbone.LabelButton.prototype.defaults.width/2,
@@ -167,14 +168,12 @@ window.START = function() {
       this.world.set("state", "play");
 
       this.listenTo(this.engine, "touchstart", this.throwFruit);
-      this.listenTo(this.engine, "touchend", this.throwFruit);
 
       return this;
     },
     pause: function() {
       this.world.set("state", "pause");
       this.stopListening(this.engine, "touchstart");
-      this.stopListening(this.engine, "touchend");
       this.engine.remove(this.pauseButton);
       this.engine.add(this.startButton);
     },
@@ -217,20 +216,24 @@ window.START = function() {
         if (name == "bomb") {
           hero.set("state", "dead");
           this.world.setTimeout(this.pause.bind(this), 1500);
-          return;
+        } else {
+          var fruits = this.world.get("fruits") + 1;
+          this.world.set("fruits", fruits);
+          this.fruitLabel.set("text", fruits);
         }
-
-        var fruits = this.world.get("fruits") + 1;
-        this.world.set("fruits", fruits);
-        this.fruitLabel.set("text", fruits);
-        return;
       }
+    },
+    onFruitLanded: function(sprite) {
+      var name = sprite.get("name"),
+          type = sprite.get("type"),
+          hero = this.world.getHero();
 
+      if (type != "fruit" || !hero || hero.isDisabled()) return;
+      
       if (name != "bomb" && name != "clock") {
         hero.set("state", "sad");
         this.world.setTimeout(this.pause.bind(this), 1500);
       }
-
     },
     handleSetLanguage: function(language) {
       var deviceLang = Backbone.storage[Backbone.LSKEY_DEVICE_LANG],

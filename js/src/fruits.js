@@ -26,14 +26,14 @@
     "walk-left": {
       sequences: sequences,
       delay: sequenceDelay,
-      velocity: -walkVelocity,
+      velocity: 0,
       scaleX: -1,
       scaleY: 1
     },
     "walk-right": {
       sequences: sequences,
       delay: sequenceDelay,
-      velocity: walkVelocity,
+      velocity: 0,
       scaleX: 1,
       scaleY: 1
     },
@@ -120,6 +120,11 @@
       ceiling: -100
     }),
     animations: animations,
+    initialize: function() {
+      Backbone.Character.prototype.initialize.apply(this, arguments);
+      this.set("floor", Backbone.HEIGHT);
+      this.on("change:state", this.onChangeState);
+    },
     knockout: function(sprite, dir) {
       this.clearAnimation();
       
@@ -131,6 +136,11 @@
       this.trigger("action", "knockout");
       return this;
     },
+    onChangeState: function() {
+      var cur = this.getStateInfo();
+      if (cur.mov == "walk")
+        this.trigger("landed", this);
+    }
   });
 
   function createFruit(name, sequences) {
