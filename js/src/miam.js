@@ -11,8 +11,8 @@
       y: 0,
       width: 150,
       height: 150,
-      paddingLeft: 35,
-      paddingRight: 35,
+      paddingLeft: 50,
+      paddingRight: 50,
       paddingTop: 85,
       paddingBottom: 50,
       attackDamage: 1

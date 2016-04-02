@@ -106,10 +106,10 @@
       width: 70,
       height: 70,
       state: "fall-left",
-      paddingTop: 4,
-      paddingBottom: 4,
-      paddingLeft: 4,
-      paddingRight: 4,
+      paddingTop: 20,
+      paddingBottom: 20,
+      paddingLeft: 20,
+      paddingRight: 20,
       collision: false,
       collideWith: [],
       health: 1,
@@ -162,5 +162,10 @@
     }
     return names;
   }, []);
+
+  createFruit("clock", [8]);
+  createFruit("bomb", [9]);
+  Backbone.fruitNames.push("clock");
+  Backbone.fruitNames.push("bomb");
 
 }).call(this);

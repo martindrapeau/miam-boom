@@ -46,12 +46,16 @@ window.START = function() {
       this.spriteSheets = new Backbone.SpriteSheetCollection(Backbone.spriteSheetDefinitions).attachToSpriteClasses();
 
       // Create the debug panel
-      this.debugPanel = ENV == "dev" ? new Backbone.DebugPanel({}, {color: "#fff"}) : null;
+      //this.debugPanel = ENV == "dev" ? new Backbone.DebugPanel({}, {color: "#fff"}) : null;
 
       // Our world
       this.world = new Backbone.World({
         state: "pause"
       });
+
+      // Lots of fruits and bombs, but only one clock
+      this.fruitNames = _.without(Backbone.fruitNames, "clock");
+      this.fruitNames = this.fruitNames.concat(this.fruitNames).concat(this.fruitNames).concat(Backbone.fruitNames);
 
       // The game engine
       var engine = this.engine = new Backbone.Engine({
@@ -135,7 +139,8 @@ window.START = function() {
       return this;
     },
     onTap: function(e) {
-      var fruitName = Backbone.fruitNames[Math.floor(8*Math.random())],
+      var index = Math.floor((this.fruitNames.length-0.01)*Math.random()),
+          fruitName = this.fruitNames[index],
           fruitClass = Backbone[_.classify(fruitName)],
           halfWidth = fruitClass.prototype.defaults.width/2,
           dir = Math.random() < 0.5 ? "right" : "left",

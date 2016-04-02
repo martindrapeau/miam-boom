@@ -19,7 +19,7 @@
     tileWidth: 70,
     tileHeight: 70,
     tileColumns: 4,
-    tileRows: 2
+    tileRows: 3
   }];
 
 }).call(this);
