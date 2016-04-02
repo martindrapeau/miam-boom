@@ -46,7 +46,7 @@ window.START = function() {
       this.spriteSheets = new Backbone.SpriteSheetCollection(Backbone.spriteSheetDefinitions).attachToSpriteClasses();
 
       // Create the debug panel
-      //this.debugPanel = ENV == "dev" ? new Backbone.DebugPanel({}, {color: "#fff"}) : null;
+      this.debugPanel = ENV == "dev" ? new Backbone.DebugPanel({}, {color: "#fff"}) : null;
 
       // Our world
       this.world = new Backbone.World({
@@ -92,7 +92,7 @@ window.START = function() {
           case "miam":
             sprite.set({y: Backbone.HEIGHT - 100 - sprite.get("height")});
             break;
-          case "florr":
+          case "floor":
             sprite.set({y: Backbone.HEIGHT - sprite.get("height")});
             break;
         }
@@ -118,6 +118,7 @@ window.START = function() {
         }]
       });
       this.world.spawnSprites();
+      this.world.getHero().debugPanel = this.debugPanel;
 
       this.engine.reset();
       if (this.debugPanel) this.debugPanel.clear();

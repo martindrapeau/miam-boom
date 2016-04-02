@@ -11,6 +11,7 @@
       y: 0,
       width: 200,
       height: 200,
+      velocity: 0,
       paddingLeft: 30,
       paddingRight: 60,
       paddingTop: 130,
@@ -50,19 +51,39 @@
       return this.get("state") == "open";
     },
     onUpdate: function(dt) {
-      var state = this.get("state");
+      if (!this.world) return true;
+
+      var state = this.get("state"),
+          x = this.get("x"),
+          y = this.get("y"),
+          width = this.get("width"),
+          minX = width/2,
+          maxX = this.world.get("width") - width/2,
+          attrs = {};
 
       if (state == "open") {
+
+        // Move
+        var centerX = Math.round(this.engine._currX);
+        if (centerX < minX) centerX = minX;
+        if (centerX > maxX) centerX = maxX;
+        attrs.x = x = centerX - width/2;
+
+        // Eat stuff
         var b = {
-          x: this.get("x") + this.get("paddingLeft"),
-          y: this.get("y") + this.get("paddingTop"),
+          x: x + this.get("paddingLeft"),
+          y: y + this.get("paddingTop"),
           width: this.getWidth(true),
           height: this.getHeight(true)
         };
         var sprites = this.world.filterAt(b, undefined, "fruit");
         for (var i = 0; i < sprites.length; i++)
           sprites[i].trigger("hit", this, "top");
+
       }
+
+      // Set modified attributes
+      if (!_.isEmpty(attrs)) this.set(attrs);
 
       return true;
     }
