@@ -207,7 +207,7 @@ window.START = function() {
         this.world.add(fruit);
       }
 
-      var delay = Math.floor(2000*Math.random());
+      var delay = Math.floor(150+1500*Math.random());
       this.throwFruitTimeoutId = this.world.setTimeout(this.throwFruit.bind(this), delay);
 
     },
