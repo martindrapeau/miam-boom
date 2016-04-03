@@ -88,7 +88,7 @@ window.START = function() {
 
       // Lots of fruits and bombs, but only one clock
       this.fruitNames = _.without(Backbone.fruitNames, "clock");
-      this.fruitNames = this.fruitNames.concat(this.fruitNames).concat(this.fruitNames).concat(Backbone.fruitNames);
+      //this.fruitNames = this.fruitNames.concat(this.fruitNames).concat(this.fruitNames).concat(Backbone.fruitNames);
 
       // The game engine
       var engine = this.engine = new Backbone.Engine({
