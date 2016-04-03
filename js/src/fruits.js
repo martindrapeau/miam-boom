@@ -164,6 +164,7 @@
   createFruit("grapes", [5]);
   createFruit("pear", [6]);
   createFruit("banana", [7]);
+  createFruit("bomb", [8]);
 
   Backbone.fruitNames = _.reduce(Backbone, function(names, prop) {
     if (typeof prop == "function" && prop.prototype && prop.prototype.defaults &&
@@ -172,10 +173,5 @@
     }
     return names;
   }, []);
-
-  createFruit("clock", [8]);
-  createFruit("bomb", [9]);
-  Backbone.fruitNames.push("clock");
-  Backbone.fruitNames.push("bomb");
 
 }).call(this);

@@ -35,7 +35,6 @@ window.START = function() {
   Backbone.Controller = Backbone.Model.extend({
     initialize: function(attributes, options) {
       options || (options = {});
-      var controller = this;
 
       var lang = Backbone.storage[Backbone.LSKEY_LANG];
       if (lang) window._lang.setLocale(lang);
@@ -56,6 +55,8 @@ window.START = function() {
       this.world.sprites.on("remove", this.onWorldSpriteRemoved, this);
       this.world.sprites.on("landed", this.onWorldSpriteLanded, this);
 
+
+      // GUI
       this.startLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
         y: Backbone.HEIGHT/2 - Backbone.Label.prototype.defaults.height,
@@ -88,9 +89,6 @@ window.START = function() {
       });
       this.world.on("change:state", this.updateBestScore, this);
 
-      // Lots of fruits and bombs, but only one clock
-      this.fruitNames = _.without(Backbone.fruitNames, "clock");
-      //this.fruitNames = this.fruitNames.concat(this.fruitNames).concat(this.fruitNames).concat(Backbone.fruitNames);
 
       // The game engine
       var engine = this.engine = new Backbone.Engine({
@@ -117,26 +115,10 @@ window.START = function() {
       window.addEventListener("resize", _.debounce(this.onResize.bind(this), 300));
       setTimeout(this.onResize.bind(this), 10);
 
+
+      // Get things going
       this.setup();
       this.pause();
-    },
-    onResize: function() {
-      canvas.height = Backbone.MOBILE ? Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) ) : Math.min(window.innerHeight, 568);
-      console.log("resize: canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
-      Backbone.HEIGHT = canvas.height;
-      this.world.set({height: Backbone.HEIGHT});
-
-      this.world.sprites.each(function(sprite) {
-        var name = sprite.get("name");
-        switch(name) {
-          case "miam":
-            sprite.set({y: Backbone.HEIGHT - 100 - sprite.get("height")});
-            break;
-          case "floor":
-            sprite.set({y: Backbone.HEIGHT - sprite.get("height")});
-            break;
-        }
-      });
     },
     setup: function() {
       this.engine.stop();
@@ -190,8 +172,8 @@ window.START = function() {
 
       if (hero && !hero.isDisabled() && !options.skip) {
 
-        var index = Math.floor((this.fruitNames.length-0.01)*Math.random()),
-            fruitName = this.fruitNames[index],
+        var index = Math.floor((Backbone.fruitNames.length-0.01)*Math.random()),
+            fruitName = Backbone.fruitNames[index],
             fruitClass = Backbone[_.classify(fruitName)],
             halfWidth = fruitClass.prototype.defaults.width/2,
             dir = Math.random() < 0.5 ? "right" : "left",
@@ -240,7 +222,7 @@ window.START = function() {
 
       if (type != "fruit" || !hero || hero.isDisabled()) return;
 
-      if (name != "bomb" && name != "clock") {
+      if (name != "bomb") {
         hero.set("state", "sad");
         this.world.clearTimeout(this.throwFruitTimeoutId);
         this.world.setTimeout(this.pause.bind(this), 1500);
@@ -275,6 +257,24 @@ window.START = function() {
         Backbone.storage[Backbone.LSKEY_DEVICE_LANG] = lang;
         this.titleScreenGui.setLanguage(lang);
       }
+    },
+    onResize: function() {
+      canvas.height = Backbone.MOBILE ? Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) ) : Math.min(window.innerHeight, 568);
+      console.log("resize: canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
+      Backbone.HEIGHT = canvas.height;
+      this.world.set({height: Backbone.HEIGHT});
+
+      this.world.sprites.each(function(sprite) {
+        var name = sprite.get("name");
+        switch(name) {
+          case "miam":
+            sprite.set({y: Backbone.HEIGHT - 100 - sprite.get("height")});
+            break;
+          case "floor":
+            sprite.set({y: Backbone.HEIGHT - sprite.get("height")});
+            break;
+        }
+      });
     }
   });
   
