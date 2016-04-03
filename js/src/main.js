@@ -63,13 +63,6 @@ window.START = function() {
         text: window._lang.get("touchToStart")
       });
 
-      this.rotateLabel = new Backbone.Label({
-        x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
-        y: Backbone.HEIGHT/4 - Backbone.Label.prototype.defaults.height,
-        text: window._lang.get("rotateYourScreen"),
-        opacity: 0
-      });
-
       this.aboutLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
         y: Backbone.HEIGHT - Backbone.Label.prototype.defaults.height,
@@ -105,6 +98,13 @@ window.START = function() {
         })
       });
       this.world.on("change:state", this.updateBestScore, this);
+
+      this.rotateLabel = new Backbone.Label({
+        x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
+        y: Backbone.Label.prototype.defaults.height,
+        text: window._lang.get("rotateYourScreen"),
+        opacity: 0
+      });
 
 
       // The game engine
@@ -180,6 +180,7 @@ window.START = function() {
       this.listenTo(this.engine, "tap", this.start);
     },
     start: function() {
+      if (this.rotateLabel.get("opacity") == 1) return;
       this.stopListening(this.engine, "tap", this.start);
       this.setup();
     },
