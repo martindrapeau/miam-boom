@@ -27,6 +27,7 @@
     },
     en: {
       languageName: "English", 
+      title: "Miam Boom!",
       touchToStart: "Touch to start",
       rotateYourScreen: "Rotate your screen",
       bestScore: "Best Score: {0}",

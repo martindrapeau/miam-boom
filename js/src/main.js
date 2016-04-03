@@ -57,6 +57,17 @@ window.START = function() {
 
 
       // GUI
+      this.titleLabel = new Backbone.Label({
+        x: 0,
+        y: 0,
+        text: window._lang.get("title"),
+        fruits: 0,
+        textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
+          font: "20px arcade",
+          textAlign: "left"
+        })
+      });
+
       this.startLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
         y: Backbone.HEIGHT/2 - Backbone.Label.prototype.defaults.height,
@@ -79,8 +90,7 @@ window.START = function() {
         text: "",
         fruits: 0,
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
-          font: "80px arcade",
-          fillStyle: "#FFFFFF"
+          font: "80px arcade"
         })
       });
       this.world.on("change:fruits", this.updateCurrentScore, this);
@@ -92,9 +102,9 @@ window.START = function() {
         fruits: bestScore,
         text: bestScore > 0 ? window._lang.get("bestScore").replace("{0}", bestScore) : "",
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
-          font: "20px arcade",
+          font: "16px arcade",
           textAlign: "right",
-          fillStyle: "#FFFFFF"
+          fillStyle: "#D0D0D0"
         })
       });
       this.world.on("change:state", this.updateBestScore, this);
@@ -163,7 +173,7 @@ window.START = function() {
       this.engine.reset();
       if (this.debugPanel) this.debugPanel.clear();
 
-      this.engine.add([this.world, this.fruitLabel, this.bestScoreLabel, this.rotateLabel, this.aboutLabel]);
+      this.engine.add([this.world, this.fruitLabel, this.bestScoreLabel, this.rotateLabel, this.aboutLabel, this.titleLabel]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
       this.engine.set("clearOnDraw", true);
       this.engine.start();

@@ -45,7 +45,7 @@
       text: "",
       textPadding: 12,
       textContextAttributes: {
-        fillStyle: "#F67D00",
+        fillStyle: "#FFFFFF",
         font: "30px arcade",
         textBaseline: "middle",
         fontWeight: "normal",
@@ -66,7 +66,7 @@
       text: "",
       textPadding: 12,
       textContextAttributes: {
-        fillStyle: "#F67D00",
+        fillStyle: "#FFFFFF",
         font: "40px arcade",
         textBaseline: "middle",
         fontWeight: "normal",
