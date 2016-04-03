@@ -298,7 +298,7 @@ window.START = function() {
       });
 
       this.rotateLabel.set({
-        opacity: canvas.height < canvas.width ? 1 : 0
+        opacity: window.innerHeight < window.innerWidth ? 1 : 0
       });
     }
   });
