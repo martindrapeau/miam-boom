@@ -20,10 +20,11 @@ window.START = function() {
     NW: NW, 
     CHROME_APP: CHROME_APP,
     MOBILE: MOBILE,
-    LSKEY_MUSIC: "ludosquest_music",
-    LSKEY_SFX: "ludosquest_sfx",
-    LSKEY_LANG: "ludosquest_lang",
-    LSKEY_DEVICE_LANG: "ludosquest_device_lang",
+    LSKEY_MUSIC: "miamboom_music",
+    LSKEY_SFX: "miamboom_sfx",
+    LSKEY_LANG: "miamboom_lang",
+    LSKEY_DEVICE_LANG: "miamboom_device_lang",
+    LSKEY_BEST_SCORE: "miamboom_best_score",
     HEIGHT: canvas.height,
     WIDTH: canvas.width,
     OPEN_URL: window.openurl || undefined,
@@ -73,11 +74,12 @@ window.START = function() {
       });
       this.world.on("change:fruits", this.updateCurrentScore, this);
 
+      var bestScore = JSON.parse(Backbone.storage[Backbone.LSKEY_BEST_SCORE] || "0");
       this.bestScoreLabel = new Backbone.Label({
         x: Backbone.WIDTH - 10 - Backbone.Label.prototype.defaults.width,
         y: 0,
-        text: "",
-        fruits: 0,
+        fruits: bestScore,
+        text: bestScore > 0 ? window._lang.get("bestScore").replace("{0}", bestScore) : "",
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
           font: "20px arcade",
           textAlign: "right",
@@ -207,9 +209,11 @@ window.START = function() {
         this.world.add(fruit);
       }
 
-      var delay = Math.floor(150+1500*Math.random());
+      var fruits = this.world.get("fruits"),
+          startDelay = Math.max(0, 250 - fruits * 3),
+          deltaDelay = Math.max(500, 2000 - fruits * 30),
+          delay = Math.floor(startDelay + deltaDelay*Math.random());
       this.throwFruitTimeoutId = this.world.setTimeout(this.throwFruit.bind(this), delay);
-
     },
     onWorldSpriteRemoved: function(sprite, world, options) {
       var name = sprite.get("name"),
@@ -254,11 +258,13 @@ window.START = function() {
       var state = this.world.get("state"),
           newScore = this.world.get("fruits"),
           bestScore = this.bestScoreLabel.get("fruits");
-      if (state == "pause" && newScore > bestScore)
+      if (state == "pause" && newScore > bestScore) {
         this.bestScoreLabel.set({
           fruits: newScore,
-          text: window._lang.get("bestScore").replace("{0}", newScore)
+          text: newScore > 0 ? window._lang.get("bestScore").replace("{0}", newScore) : ""
         });
+        Backbone.storage[Backbone.LSKEY_BEST_SCORE] = JSON.stringify(newScore);
+      }
       return this;
     },
     handleSetLanguage: function(language) {
