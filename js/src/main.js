@@ -63,6 +63,23 @@ window.START = function() {
         text: window._lang.get("touchToStart")
       });
 
+      this.rotateLabel = new Backbone.Label({
+        x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
+        y: Backbone.HEIGHT/4 - Backbone.Label.prototype.defaults.height,
+        text: window._lang.get("rotateYourScreen"),
+        opacity: 0
+      });
+
+      this.aboutLabel = new Backbone.Label({
+        x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
+        y: Backbone.HEIGHT - Backbone.Label.prototype.defaults.height,
+        text: window._lang.get("about"),
+        textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
+          font: "16px arcade",
+          fillStyle: "#606099"
+        })
+      });
+
       this.fruitLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
         y: 80,
@@ -146,7 +163,7 @@ window.START = function() {
       this.engine.reset();
       if (this.debugPanel) this.debugPanel.clear();
 
-      this.engine.add([this.world, this.fruitLabel, this.bestScoreLabel]);
+      this.engine.add([this.world, this.fruitLabel, this.bestScoreLabel, this.rotateLabel, this.aboutLabel]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
       this.engine.set("clearOnDraw", true);
       this.engine.start();
@@ -274,6 +291,14 @@ window.START = function() {
             sprite.set({y: Backbone.HEIGHT - sprite.get("height")});
             break;
         }
+      });
+
+      this.aboutLabel.set({
+        y: Backbone.HEIGHT - this.aboutLabel.get("height")
+      });
+
+      this.rotateLabel.set({
+        opacity: canvas.height < canvas.width ? 1 : 0
       });
     }
   });

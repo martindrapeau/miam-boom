@@ -28,7 +28,9 @@
     en: {
       languageName: "English", 
       touchToStart: "Touch to start",
+      rotateYourScreen: "Rotate your screen",
       bestScore: "Best Score: {0}",
+      about: "By Émilia, Ludovic & Martin",
       loading: "Loading...",
       newGame: "New game",
       continue: "Continue",
