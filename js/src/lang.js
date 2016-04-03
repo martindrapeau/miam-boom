@@ -28,6 +28,7 @@
     en: {
       languageName: "English", 
       touchToStart: "Touch to start",
+      bestScore: "Best Score: {0}",
       loading: "Loading...",
       newGame: "New game",
       continue: "Continue",

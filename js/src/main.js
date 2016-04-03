@@ -53,35 +53,38 @@ window.START = function() {
         state: "pause"
       });
       this.world.sprites.on("remove", this.onWorldSpriteRemoved, this);
-      this.world.sprites.on("landed", this.onFruitLanded, this);
+      this.world.sprites.on("landed", this.onWorldSpriteLanded, this);
 
-      this.startButton = new Backbone.LabelButton({
-        x: Backbone.WIDTH/2 - Backbone.LabelButton.prototype.defaults.width/2,
-        y: 100,
-        text: "START"
+      this.startLabel = new Backbone.Label({
+        x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
+        y: Backbone.HEIGHT/2 - Backbone.Label.prototype.defaults.height,
+        text: window._lang.get("touchToStart")
       });
-      this.startButton.on("tap", this.start, this);
-
-      this.pauseButton = new Backbone.LabelButton({
-        x: 10,
-        y: 0,
-        width: 80,
-        height: 50,
-        text: "PAUSE",
-        textContextAttributes: _.extend({}, Backbone.LabelButton.prototype.defaults.textContextAttributes, {
-          font: "20px arcade"
-        })
-      });
-      this.pauseButton.on("tap", this.pause, this);
 
       this.fruitLabel = new Backbone.Label({
+        x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
+        y: 80,
+        text: "",
+        fruits: 0,
+        textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
+          font: "80px arcade",
+          fillStyle: "#FFFFFF"
+        })
+      });
+      this.world.on("change:fruits", this.updateCurrentScore, this);
+
+      this.bestScoreLabel = new Backbone.Label({
         x: Backbone.WIDTH - 10 - Backbone.Label.prototype.defaults.width,
         y: 0,
-        text: 0
+        text: "",
+        fruits: 0,
+        textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
+          font: "20px arcade",
+          textAlign: "right",
+          fillStyle: "#FFFFFF"
+        })
       });
-      this.world.on("change:fruits", function() {
-        this.fruitLabel.set("text", this.world.get("fruits"));
-      }, this);
+      this.world.on("change:state", this.updateBestScore, this);
 
       // Lots of fruits and bombs, but only one clock
       this.fruitNames = _.without(Backbone.fruitNames, "clock");
@@ -134,7 +137,6 @@ window.START = function() {
       });
     },
     setup: function() {
-
       this.engine.stop();
       this.world.set("state", "pause");
 
@@ -160,50 +162,54 @@ window.START = function() {
       this.engine.reset();
       if (this.debugPanel) this.debugPanel.clear();
 
-      this.engine.add([this.world, this.fruitLabel]);
+      this.engine.add([this.world, this.fruitLabel, this.bestScoreLabel]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
       this.engine.set("clearOnDraw", true);
       this.engine.start();
 
       this.world.set("state", "play");
-
-      this.listenTo(this.engine, "touchstart", this.throwFruit);
+      this.throwFruit({skip:true});
 
       return this;
     },
     pause: function() {
+      this.world.clearTimeout(this.throwFruitTimeoutId);
       this.world.set("state", "pause");
-      this.stopListening(this.engine, "touchstart");
-      this.engine.remove(this.pauseButton);
-      this.engine.add(this.startButton);
+      this.engine.add(this.startLabel);
+      this.listenTo(this.engine, "tap", this.start);
     },
     start: function() {
+      this.stopListening(this.engine, "tap", this.start);
       this.setup();
-      this.engine.add(this.pauseButton);
     },
-    throwFruit: function(e) {
-      if (e.canvasY < Backbone.HEIGHT/3) return;
-
+    throwFruit: function(options) {
+      options || (options = {});
       var hero = this.world.getHero();
-      if (!hero || hero.isDisabled()) return;
 
-      var index = Math.floor((this.fruitNames.length-0.01)*Math.random()),
-          fruitName = this.fruitNames[index],
-          fruitClass = Backbone[_.classify(fruitName)],
-          halfWidth = fruitClass.prototype.defaults.width/2,
-          dir = Math.random() < 0.5 ? "right" : "left",
-          x =  dir == "right" ? -halfWidth : Backbone.WIDTH-halfWidth,
-          y = Math.round(100*Math.random()),
-          yVelocity = Math.round(-500*Math.random());
+      if (hero && !hero.isDisabled() && !options.skip) {
 
-      var fruit = new fruitClass({
-        x: x,
-        y: y,
-        state: fruitClass.prototype.buildState("fall", dir),
-        yVelocity: yVelocity
-      });
+        var index = Math.floor((this.fruitNames.length-0.01)*Math.random()),
+            fruitName = this.fruitNames[index],
+            fruitClass = Backbone[_.classify(fruitName)],
+            halfWidth = fruitClass.prototype.defaults.width/2,
+            dir = Math.random() < 0.5 ? "right" : "left",
+            x =  dir == "right" ? -halfWidth : Backbone.WIDTH-halfWidth,
+            y = Math.round(100*Math.random()),
+            yVelocity = Math.round(-500*Math.random());
 
-      this.world.add(fruit);
+        var fruit = new fruitClass({
+          x: x,
+          y: y,
+          state: fruitClass.prototype.buildState("fall", dir),
+          yVelocity: yVelocity
+        });
+
+        this.world.add(fruit);
+      }
+
+      var delay = Math.floor(1000*Math.random());
+      this.throwFruitTimeoutId = this.world.setTimeout(this.throwFruit.bind(this), delay);
+
     },
     onWorldSpriteRemoved: function(sprite, world, options) {
       var name = sprite.get("name"),
@@ -215,25 +221,45 @@ window.START = function() {
       if (options && options.eaten) {
         if (name == "bomb") {
           hero.set("state", "dead");
+          this.world.clearTimeout(this.throwFruitTimeoutId);
           this.world.setTimeout(this.pause.bind(this), 1500);
         } else {
           var fruits = this.world.get("fruits") + 1;
           this.world.set("fruits", fruits);
-          this.fruitLabel.set("text", fruits);
         }
       }
     },
-    onFruitLanded: function(sprite) {
+    onWorldSpriteLanded: function(sprite) {
       var name = sprite.get("name"),
           type = sprite.get("type"),
           hero = this.world.getHero();
 
       if (type != "fruit" || !hero || hero.isDisabled()) return;
-      
+
       if (name != "bomb" && name != "clock") {
         hero.set("state", "sad");
+        this.world.clearTimeout(this.throwFruitTimeoutId);
         this.world.setTimeout(this.pause.bind(this), 1500);
       }
+    },
+    updateCurrentScore: function() {
+      var fruits = this.world.get("fruits");
+      this.fruitLabel.set({
+        fruits: fruits,
+        text: fruits > 0 ? fruits : ""
+      });
+      return this;
+    },
+    updateBestScore: function() {
+      var state = this.world.get("state"),
+          newScore = this.world.get("fruits"),
+          bestScore = this.bestScoreLabel.get("fruits");
+      if (state == "pause" && newScore > bestScore)
+        this.bestScoreLabel.set({
+          fruits: newScore,
+          text: window._lang.get("bestScore").replace("{0}", newScore)
+        });
+      return this;
     },
     handleSetLanguage: function(language) {
       var deviceLang = Backbone.storage[Backbone.LSKEY_DEVICE_LANG],
