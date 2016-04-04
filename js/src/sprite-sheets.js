@@ -20,6 +20,16 @@
     tileHeight: 70,
     tileColumns: 4,
     tileRows: 3
+  }, {
+    id: "boom",
+    img: "#fruits",
+    imgUrl: "img/fruits.png",
+    x: 70,
+    y: 140,
+    tileWidth: 120,
+    tileHeight: 70,
+    tileColumns: 1,
+    tileRows: 1
   }];
 
 }).call(this);

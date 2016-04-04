@@ -138,8 +138,13 @@
     },
     onChangeState: function() {
       var cur = this.getStateInfo();
-      if (cur.mov == "walk")
+      if (cur.mov == "walk") {
         this.trigger("landed", this);
+        this.onLand();
+      }
+    },
+    onLand: function() {
+      // TODO: splat!
     }
   });
 
@@ -164,7 +169,6 @@
   createFruit("grapes", [5]);
   createFruit("pear", [6]);
   createFruit("banana", [7]);
-  createFruit("bomb", [8]);
 
   Backbone.fruitNames = _.reduce(Backbone, function(names, prop) {
     if (typeof prop == "function" && prop.prototype && prop.prototype.defaults &&
