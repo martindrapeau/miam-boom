@@ -309,7 +309,7 @@ window.START = function() {
       });
 
       this.rotateLabel.set({
-        opacity: window.innerHeight < window.innerWidth ? 1 : 0
+        opacity: Backbone.MOBILE && window.innerHeight < window.innerWidth ? 1 : 0
       });
     }
   });
