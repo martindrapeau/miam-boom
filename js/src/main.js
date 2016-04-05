@@ -310,9 +310,10 @@ window.START = function() {
         y: Backbone.HEIGHT - this.aboutLabel.get("height")
       });
 
-      this.rotateLabel.set({
-        opacity: Backbone.MOBILE && window.innerHeight < window.innerWidth ? 1 : 0
-      });
+      var rotate = Backbone.MOBILE && window.innerHeight < window.innerWidth;
+      this.rotateLabel.set("opacity", rotate ? 1 : 0);
+      this.fruitLabel.set("opacity", rotate ? 0 : 1);
+      this.fruitLabel.set("opacity", rotate ? 0 : 1);
     }
   });
   
