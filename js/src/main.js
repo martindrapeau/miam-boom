@@ -120,7 +120,8 @@ window.START = function() {
       // The game engine
       var engine = this.engine = new Backbone.Engine({
         music: !!JSON.parse(Backbone.storage[Backbone.LSKEY_MUSIC] !== undefined ? Backbone.storage[Backbone.LSKEY_MUSIC] : "true"),
-        sfx: !!JSON.parse(Backbone.storage[Backbone.LSKEY_SFX] !== undefined ? Backbone.storage[Backbone.LSKEY_SFX] : "true")
+        sfx: !!JSON.parse(Backbone.storage[Backbone.LSKEY_SFX] !== undefined ? Backbone.storage[Backbone.LSKEY_SFX] : "true"),
+        tapMoveTolerance: 50
       }, {
         canvas: canvas,
         debugPanel: this.debugPanel
@@ -220,9 +221,10 @@ window.START = function() {
       }
 
       var fruits = this.world.get("fruits"),
-          startDelay = Math.max(0, 250 - fruits * 3),
-          deltaDelay = Math.max(500, 2000 - fruits * 30),
+          startDelay = Math.max(150, 350 - fruits * 2),
+          deltaDelay = Math.max(500, 1500 - fruits * 20),
           delay = Math.floor(startDelay + deltaDelay*Math.random());
+      console.log("throwFruit in", delay);
       this.throwFruitTimeoutId = this.world.setTimeout(this.throwFruit.bind(this), delay);
     },
     onWorldSpriteRemoved: function(sprite, world, options) {

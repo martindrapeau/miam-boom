@@ -30,7 +30,8 @@
       name: "boom",
       spriteSheet: "boom",
       width: 120,
-      height: 70
+      height: 70,
+      zIndex: 1
     }),
     animations: {
       idle: {
@@ -42,23 +43,14 @@
 
   Backbone.Bomb = Backbone.Fruit.extend({
     defaults: _.extend({}, Backbone.Fruit.prototype.defaults, {
-      name: "bomb"
+      name: "bomb",
+      explodeSprite: "boom"
     }),
     animations: _.object(_.map(Backbone.Fruit.prototype.animations, function(animation, name) {
       return [name, _.extend({}, animation, {
         sequences: [8]
       })];
-    })),
-    onLand: function() {
-      _.delay(function() {
-        this.world.remove(this);
-      }.bind(this));
-
-      this.world.add(new Backbone.Boom({
-        x: this.get("x") + this.get("width")/2 - Backbone.Boom.prototype.defaults.width/2,
-        y: this.get("y") -10
-      }));
-    }
+    }))
   });
 
   Backbone.fruitNames.push("bomb");

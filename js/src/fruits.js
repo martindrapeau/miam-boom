@@ -122,7 +122,7 @@
     animations: animations,
     initialize: function() {
       Backbone.Character.prototype.initialize.apply(this, arguments);
-      this.set("floor", Backbone.HEIGHT);
+      this.set("floor", Backbone.HEIGHT - 80);
       this.on("change:state", this.onChangeState);
     },
     knockout: function(sprite, dir) {
@@ -144,14 +144,24 @@
       }
     },
     onLand: function() {
-      // TODO: splat!
+      _.delay(function() {
+        this.world.remove(this);
+      }.bind(this));
+
+      var cls = _.classify(this.get("explodeSprite"));
+
+      this.world.add(new Backbone[cls]({
+        x: this.get("x") + this.get("width")/2 - Backbone.Boom.prototype.defaults.width/2,
+        y: this.get("y")
+      }));
     }
   });
 
   function createFruit(name, sequences) {
     Backbone[_.classify(name)] = Backbone.Fruit.extend({
       defaults: _.extend({}, Backbone.Fruit.prototype.defaults, {
-        name: name
+        name: name,
+        explodeSprite: "splat-" + name
       }),
       animations: _.object(_.map(Backbone.Fruit.prototype.animations, function(animation, name) {
         return [name, _.extend({}, animation, {

@@ -30,6 +30,16 @@
     tileHeight: 70,
     tileColumns: 1,
     tileRows: 1
+  }, {
+    id: "splat",
+    img: "#splat",
+    imgUrl: "img/splat.png",
+    x: 0,
+    y: 0,
+    tileWidth: 120,
+    tileHeight: 120,
+    tileColumns: 3,
+    tileRows: 2
   }];
 
 }).call(this);
