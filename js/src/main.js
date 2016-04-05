@@ -76,7 +76,8 @@ window.START = function() {
 
       this.aboutLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
-        y: Backbone.HEIGHT - Backbone.Label.prototype.defaults.height,
+        y: 80,
+        height: 30,
         text: window._lang.get("about"),
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
           font: "16px arcade",
@@ -306,9 +307,8 @@ window.START = function() {
         }
       });
 
-      this.aboutLabel.set({
-        y: Backbone.HEIGHT - this.aboutLabel.get("height")
-      });
+      this.aboutLabel.set("y", Backbone.HEIGHT - this.aboutLabel.get("height"));
+      this.startLabel.set("y", Math.roud(3*(Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height)/4));
 
       var rotate = Backbone.MOBILE && window.innerHeight < window.innerWidth;
       this.rotateLabel.set("opacity", rotate ? 1 : 0);
