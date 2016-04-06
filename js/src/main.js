@@ -32,6 +32,41 @@ window.START = function() {
     storage: CHROME_APP ? window.chrome.storage : window.localStorage
   });
 
+  Backbone.RATIO = 2;
+  function adjustDefaultsToRatio(cls, options) {
+    options || (options = {});
+    options.ratio || (options.ratio = Backbone.RATIO);
+
+    var keys = ["x", "y", "width", "height", "paddingLeft", "paddingRight", "paddingTop", "paddingBottom"];
+    if (!cls.prototype._originalRatioValues) cls.prototype._originalRatioValues = _.pick(cls.prototype.defaults, keys);
+
+    var attrs = _.clone(cls.prototype._originalRatioValues);
+    for (var i = 0; i < keys.length; i++) cls.prototype.defaults[keys[i]] *= options.ratio;
+    cls.prototype.defaults.ratio = options.ratio;
+  };
+  var classes = ["Miam", "Bomb", "Boom", "Fruit", "Floor"];
+  _.each(classes, function(className) {
+    adjustDefaultsToRatio(Backbone[className]);
+  });
+
+  function adjustSpriteSheetToRatio(o, options) {
+    options || (options = {});
+    options.ratio || (options.ratio = Backbone.RATIO);
+
+    _.extend(o, {
+      ratio: options.ratio,
+      x: o.x * options.ratio,
+      y: o.y * options.ratio,
+      tileWidth: o.tileWidth * options.ratio,
+      tileHeight: o.tileHeight * options.ratio,
+      imgUrl: o.imgUrl.replace(".png", options.ratio + ".png")
+    });
+  }
+  _.each(Backbone.spriteSheetDefinitions, function(o) {
+    adjustSpriteSheetToRatio(o);
+  });
+
+
   Backbone.Controller = Backbone.Model.extend({
     initialize: function(attributes, options) {
       options || (options = {});
@@ -289,7 +324,7 @@ window.START = function() {
       }
     },
     onResize: function() {
-      canvas.height = Backbone.MOBILE ? Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) ) : Math.min(window.innerHeight, 568);
+      canvas.height = Backbone.MOBILE ? Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) ) : Math.min(window.innerHeight, 960);
       console.log("resize: canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
       Backbone.HEIGHT = canvas.height;
       this.world.set({height: Backbone.HEIGHT});
