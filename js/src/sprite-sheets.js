@@ -6,8 +6,8 @@
     imgUrl: "img/miam.png",
     x: 0,
     y: 0,
-    tileWidth: 150,
-    tileHeight: 150,
+    tileWidth: 180,
+    tileHeight: 180,
     tileColumns: 4,
     tileRows: 1
   }, {

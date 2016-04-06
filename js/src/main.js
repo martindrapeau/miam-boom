@@ -146,10 +146,10 @@ window.START = function() {
 
 
       // Get things going
-      this.setup();
+      this.setup({skip:true});
       this.pause();
     },
-    setup: function() {
+    setup: function(options) {
       this.engine.stop();
       this.world.set("state", "pause");
 
@@ -164,7 +164,7 @@ window.START = function() {
         }, {
           name: "miam",
           x: Backbone.WIDTH/2 - Backbone.Miam.prototype.defaults.width/2,
-          y: Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height
+          y: Backbone.HEIGHT - 80 - Backbone.Miam.prototype.defaults.height
         }],
         fruits: 0,
         time: 15000
@@ -181,7 +181,7 @@ window.START = function() {
       this.engine.start();
 
       this.world.set("state", "play");
-      this.throwFruit({skip:true});
+      this.throwFruit(options);
 
       return this;
     },
@@ -189,11 +189,11 @@ window.START = function() {
       this.world.clearTimeout(this.throwFruitTimeoutId);
       this.world.set("state", "pause");
       this.engine.add(this.startLabel);
-      this.listenTo(this.engine, "tap", this.start);
+      this.listenTo(this.engine, "touchstart", this.start);
     },
     start: function() {
       if (this.rotateLabel.get("opacity") == 1) return;
-      this.stopListening(this.engine, "tap", this.start);
+      this.stopListening(this.engine, "touchstart", this.start);
       this.setup();
     },
     throwFruit: function(options) {
@@ -225,7 +225,6 @@ window.START = function() {
           startDelay = Math.max(150, 350 - fruits * 2),
           deltaDelay = Math.max(500, 1500 - fruits * 20),
           delay = Math.floor(startDelay + deltaDelay*Math.random());
-      console.log("throwFruit in", delay);
       this.throwFruitTimeoutId = this.world.setTimeout(this.throwFruit.bind(this), delay);
     },
     onWorldSpriteRemoved: function(sprite, world, options) {
@@ -299,7 +298,7 @@ window.START = function() {
         var name = sprite.get("name");
         switch(name) {
           case "miam":
-            sprite.set({y: Backbone.HEIGHT - 100 - sprite.get("height")});
+            sprite.set({y: Backbone.HEIGHT - 80 - sprite.get("height")});
             break;
           case "floor":
             sprite.set({y: Backbone.HEIGHT - sprite.get("height")});

@@ -9,8 +9,8 @@
       state: "idle",
       x: 0,
       y: 0,
-      width: 150,
-      height: 150,
+      width: 180,
+      height: 180,
       paddingLeft: 50,
       paddingRight: 50,
       paddingTop: 85,
@@ -39,6 +39,7 @@
       if (this.engine) {
         this.listenTo(this.engine, "touchstart", this.openMouth);
         this.listenTo(this.engine, "touchend", this.closeMouth);
+        if (this.engine._touchStartTime) this.set("state", "open");
       }
     },
     onDetach: function() {
