@@ -29,47 +29,19 @@ window.START = function() {
     WIDTH: canvas.width,
     OPEN_URL: window.openurl || undefined,
     ROOT_URL: ENV == "prod" ? "http://www.miamboom.com" : "",
+    RATIO: 2,
     storage: CHROME_APP ? window.chrome.storage : window.localStorage
-  });
-
-  Backbone.RATIO = 2;
-  function adjustDefaultsToRatio(cls, options) {
-    options || (options = {});
-    options.ratio || (options.ratio = Backbone.RATIO);
-
-    var keys = ["x", "y", "width", "height", "paddingLeft", "paddingRight", "paddingTop", "paddingBottom"];
-    if (!cls.prototype._originalRatioValues) cls.prototype._originalRatioValues = _.pick(cls.prototype.defaults, keys);
-
-    var attrs = _.clone(cls.prototype._originalRatioValues);
-    for (var i = 0; i < keys.length; i++) cls.prototype.defaults[keys[i]] *= options.ratio;
-    cls.prototype.defaults.ratio = options.ratio;
-  };
-  var classes = ["Miam", "Bomb", "Boom", "Fruit", "Floor"];
-  _.each(classes, function(className) {
-    adjustDefaultsToRatio(Backbone[className]);
-  });
-
-  function adjustSpriteSheetToRatio(o, options) {
-    options || (options = {});
-    options.ratio || (options.ratio = Backbone.RATIO);
-
-    _.extend(o, {
-      ratio: options.ratio,
-      x: o.x * options.ratio,
-      y: o.y * options.ratio,
-      tileWidth: o.tileWidth * options.ratio,
-      tileHeight: o.tileHeight * options.ratio,
-      imgUrl: o.imgUrl.replace(".png", options.ratio + ".png")
-    });
-  }
-  _.each(Backbone.spriteSheetDefinitions, function(o) {
-    adjustSpriteSheetToRatio(o);
   });
 
 
   Backbone.Controller = Backbone.Model.extend({
     initialize: function(attributes, options) {
       options || (options = {});
+
+      window.addEventListener("resize", _.debounce(this.onResize.bind(this), 300));
+      this.onResize();
+      Backbone.adjustSizes();
+
 
       var lang = Backbone.storage[Backbone.LSKEY_LANG];
       if (lang) window._lang.setLocale(lang);
@@ -102,27 +74,31 @@ window.START = function() {
           textAlign: "left"
         })
       });
+      Backbone.adjustLabelSize(this.titleLabel);
 
       this.startLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
         y: Backbone.HEIGHT/2 - Backbone.Label.prototype.defaults.height,
-        text: window._lang.get("touchToStart")
+        text: window._lang.get("touchToStart"),
+        textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes)
       });
+      Backbone.adjustLabelSize(this.startLabel);
 
       this.aboutLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
         y: 80,
-        height: 30,
+        height: Backbone.Label.prototype.defaults.height/2,
         text: window._lang.get("about"),
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
           font: "16px arcade",
           fillStyle: "#606099"
         })
       });
+      Backbone.adjustLabelSize(this.aboutLabel);
 
       this.fruitLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
-        y: 80,
+        y: Math.round(Backbone.HEIGHT*0.22),
         text: "",
         fruits: 0,
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
@@ -130,6 +106,7 @@ window.START = function() {
         })
       });
       this.world.on("change:fruits", this.updateCurrentScore, this);
+      Backbone.adjustLabelSize(this.fruitLabel);
 
       var bestScore = JSON.parse(Backbone.storage[Backbone.LSKEY_BEST_SCORE] || "0");
       this.bestScoreLabel = new Backbone.Label({
@@ -144,6 +121,7 @@ window.START = function() {
         })
       });
       this.world.on("change:state", this.updateBestScore, this);
+      Backbone.adjustLabelSize(this.bestScoreLabel);
 
       this.rotateLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
@@ -151,6 +129,7 @@ window.START = function() {
         text: window._lang.get("rotateYourScreen"),
         opacity: 0
       });
+      Backbone.adjustLabelSize(this.rotateLabel);
 
 
       // The game engine
@@ -176,11 +155,8 @@ window.START = function() {
         audio.trigger("attach");
       });
 
-      window.addEventListener("resize", _.debounce(this.onResize.bind(this), 300));
-      setTimeout(this.onResize.bind(this), 10);
-
-
       // Get things going
+      this.onResize();
       this.setup({skip:true});
       this.pause();
     },
@@ -199,7 +175,7 @@ window.START = function() {
         }, {
           name: "miam",
           x: Backbone.WIDTH/2 - Backbone.Miam.prototype.defaults.width/2,
-          y: Backbone.HEIGHT - 80 - Backbone.Miam.prototype.defaults.height
+          y: Math.round(Backbone.HEIGHT*0.86) - Backbone.Miam.prototype.defaults.height
         }],
         fruits: 0,
         time: 15000
@@ -327,27 +303,29 @@ window.START = function() {
       canvas.height = Backbone.MOBILE ? Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) ) : Math.min(window.innerHeight, 960);
       console.log("resize: canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
       Backbone.HEIGHT = canvas.height;
-      this.world.set({height: Backbone.HEIGHT});
 
-      this.world.sprites.each(function(sprite) {
-        var name = sprite.get("name");
-        switch(name) {
-          case "miam":
-            sprite.set({y: Backbone.HEIGHT - 80 - sprite.get("height")});
-            break;
-          case "floor":
-            sprite.set({y: Backbone.HEIGHT - sprite.get("height")});
-            break;
-        }
-      });
+      if (this.world) {
+        this.world.set({height: Backbone.HEIGHT});
+        this.world.sprites.each(function(sprite) {
+          var name = sprite.get("name");
+          switch(name) {
+            case "miam":
+              sprite.set({y: Math.round(Backbone.HEIGHT*0.86) - sprite.get("height")});
+              break;
+            case "floor":
+              sprite.set({y: Backbone.HEIGHT - sprite.get("height")});
+              break;
+          }
+        });
 
-      this.aboutLabel.set("y", Backbone.HEIGHT - this.aboutLabel.get("height"));
-      this.startLabel.set("y", Math.round(3*(Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height)/4));
+        this.aboutLabel.set("y", Backbone.HEIGHT - this.aboutLabel.get("height"));
+        this.startLabel.set("y", Math.round(3*(Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height)/4));
 
-      var rotate = Backbone.MOBILE && window.innerHeight < window.innerWidth;
-      this.rotateLabel.set("opacity", rotate ? 1 : 0);
-      this.fruitLabel.set("opacity", rotate ? 0 : 1);
-      this.fruitLabel.set("opacity", rotate ? 0 : 1);
+        var rotate = Backbone.MOBILE && window.innerHeight < window.innerWidth;
+        this.rotateLabel.set("opacity", rotate ? 1 : 0);
+        this.fruitLabel.set("opacity", rotate ? 0 : 1);
+        this.fruitLabel.set("opacity", rotate ? 0 : 1);
+      }
     }
   });
   

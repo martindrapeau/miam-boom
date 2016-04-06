@@ -122,7 +122,7 @@
     animations: animations,
     initialize: function() {
       Backbone.Character.prototype.initialize.apply(this, arguments);
-      this.set("floor", Backbone.HEIGHT - 80);
+      this.set("floor", Math.round(Backbone.HEIGHT*0.82));
       this.on("change:state", this.onChangeState);
     },
     knockout: function(sprite, dir) {

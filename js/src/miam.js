@@ -13,8 +13,8 @@
       height: 180,
       paddingLeft: 50,
       paddingRight: 50,
-      paddingTop: 85,
-      paddingBottom: 50,
+      paddingTop: 65,
+      paddingBottom: 90,
       attackDamage: 1
     },
     animations: {
