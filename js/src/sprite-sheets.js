@@ -12,34 +12,44 @@
     tileRows: 1
   }, {
     id: "fruits",
-    img: "#fruits",
-    imgUrl: "img/fruits.png",
+    img: "#miam",
+    imgUrl: "img/miam.png",
     x: 0,
-    y: 0,
-    tileWidth: 70,
-    tileHeight: 70,
-    tileColumns: 4,
-    tileRows: 3
+    y: 270,
+    tileWidth: 90,
+    tileHeight: 90,
+    tileColumns: 8,
+    tileRows: 1
+  }, {
+    id: "bomb",
+    img: "#miam",
+    imgUrl: "img/miam.png",
+    x: 450,
+    y: 180,
+    tileWidth: 90,
+    tileHeight: 90,
+    tileColumns: 1,
+    tileRows: 1
   }, {
     id: "boom",
-    img: "#fruits",
-    imgUrl: "img/fruits.png",
-    x: 70,
-    y: 140,
-    tileWidth: 120,
-    tileHeight: 70,
+    img: "#miam",
+    imgUrl: "img/miam.png",
+    x: 540,
+    y: 180,
+    tileWidth: 160,
+    tileHeight: 90,
     tileColumns: 1,
     tileRows: 1
   }, {
     id: "splat",
-    img: "#splat",
-    imgUrl: "img/splat.png",
+    img: "#miam",
+    imgUrl: "img/miam.png",
     x: 0,
-    y: 0,
-    tileWidth: 120,
-    tileHeight: 120,
-    tileColumns: 3,
-    tileRows: 2
+    y: 180,
+    tileWidth: 90,
+    tileHeight: 90,
+    tileColumns: 5,
+    tileRows: 1
   }];
 
 }).call(this);

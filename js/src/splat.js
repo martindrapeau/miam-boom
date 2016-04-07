@@ -27,13 +27,13 @@
     });
   }
 
-  createSplat("splat-water-melon", [5]);
-  createSplat("splat-orange", [0]);
-  createSplat("splat-strawberry", [3]);
-  createSplat("splat-apple", [3]);
-  createSplat("splat-pineapple", [0]);
-  createSplat("splat-grapes", [1]);
-  createSplat("splat-pear", [0]);
-  createSplat("splat-banana", [4]);
+  createSplat("splat-grapes", [3]);
+  createSplat("splat-lemon", [1]);
+  createSplat("splat-pineapple", [4]);
+  createSplat("splat-apple", [0]);
+  createSplat("splat-water-melon", [0]);
+  createSplat("splat-strwaberry", [0]);
+  createSplat("splat-cherries", [0]);
+  createSplat("splat-banana", [1]);
 
 }).call(this);

@@ -29,8 +29,8 @@
     defaults: _.extend({}, Backbone.Ephemeral.prototype.defaults, {
       name: "boom",
       spriteSheet: "boom",
-      width: 120,
-      height: 70,
+      width: 160,
+      height: 90,
       zIndex: 1
     }),
     animations: {
@@ -44,11 +44,12 @@
   Backbone.Bomb = Backbone.Fruit.extend({
     defaults: _.extend({}, Backbone.Fruit.prototype.defaults, {
       name: "bomb",
-      explodeSprite: "boom"
+      explodeSprite: "boom",
+      spriteSheet: "bomb"
     }),
     animations: _.object(_.map(Backbone.Fruit.prototype.animations, function(animation, name) {
       return [name, _.extend({}, animation, {
-        sequences: [8]
+        sequences: [0]
       })];
     }))
   });

@@ -103,11 +103,11 @@
       type: "fruit",
       name: undefined,
       spriteSheet: "fruits",
-      width: 70,
-      height: 70,
+      width: 90,
+      height: 90,
       state: "fall-left",
-      paddingTop: 20,
-      paddingBottom: 20,
+      paddingTop: 30,
+      paddingBottom: 30,
       paddingLeft: 20,
       paddingRight: 20,
       collision: false,
@@ -122,7 +122,7 @@
     animations: animations,
     initialize: function() {
       Backbone.Character.prototype.initialize.apply(this, arguments);
-      this.set("floor", Math.round(Backbone.HEIGHT*0.82));
+      this.set("floor", Backbone.HEIGHT - Backbone.Floor.prototype.defaults.height + this.get("height")/2);
       this.on("change:state", this.onChangeState);
     },
     knockout: function(sprite, dir) {
@@ -171,13 +171,13 @@
     });
   }
 
-  createFruit("water-melon", [0]);
-  createFruit("orange", [1]);
-  createFruit("strawberry", [2]);
+  createFruit("grapes", [0]);
+  createFruit("lemon", [1]);
+  createFruit("pineapple", [2]);
   createFruit("apple", [3]);
-  createFruit("pineapple", [4]);
-  createFruit("grapes", [5]);
-  createFruit("pear", [6]);
+  createFruit("water-melon", [4]);
+  createFruit("strwaberry", [5]);
+  createFruit("cherries", [6]);
   createFruit("banana", [7]);
 
   Backbone.fruitNames = _.reduce(Backbone, function(names, prop) {
