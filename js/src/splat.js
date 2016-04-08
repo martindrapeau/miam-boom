@@ -4,6 +4,8 @@
     defaults: _.extend({}, Backbone.Sprite.prototype.defaults, {
       type: "splat",
       spriteSheet: "splat",
+      width: 90,
+      height: 90,
       zIndex: 1
     }),
     animations: {

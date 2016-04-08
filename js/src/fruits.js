@@ -151,7 +151,7 @@
       var cls = _.classify(this.get("explodeSprite"));
 
       this.world.add(new Backbone[cls]({
-        x: this.get("x") + this.get("width")/2 - Backbone.Boom.prototype.defaults.width/2,
+        x: this.get("x") + this.get("width")/2 - Backbone[cls].prototype.defaults.width/2,
         y: this.get("y")
       }));
     }

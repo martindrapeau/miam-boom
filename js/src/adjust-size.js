@@ -1,5 +1,10 @@
 (function() {
 
+  // Everything was defined for a width of 320.
+  // These functions size up to 640 dynamically.
+  // TODO: The classes and instances should probably have functions of their own
+  // to properly resize.
+
   function adjustDefaultsToRatio(cls, options) {
     options || (options = {});
     options.ratio || (options.ratio = Backbone.RATIO);
@@ -44,7 +49,11 @@
   }
 
   Backbone.adjustSizes = function() {
-    var classes = ["Miam", "Bomb", "Boom", "Fruit", "Floor", "Label"];
+    var classes = _.union(
+      ["Miam", "Boom", "Fruit", "Floor", "Label", "Splat"],
+      _.map(Backbone.fruitNames, function(fruitName) {return _.classify(fruitName); }),
+      _.map(Backbone.fruitNames, function(fruitName) {return _.classify(Backbone[_.classify(fruitName)].prototype.defaults.explodeSprite); })
+    );
     _.each(classes, function(className) {
       adjustDefaultsToRatio(Backbone[className]);
     });
@@ -62,11 +71,14 @@
           }
         });
       });
-    })
+    });
 
     _.each(Backbone.spriteSheetDefinitions, function(o) {
       adjustSpriteSheetToRatio(o);
     });
+
+    Backbone.World.prototype.defaults.tileWidth *= Backbone.RATIO;
+    Backbone.World.prototype.defaults.tileHeight *= Backbone.RATIO;
   }
 
 }).call(this);

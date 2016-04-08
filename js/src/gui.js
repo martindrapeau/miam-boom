@@ -55,34 +55,13 @@
       easingTime: 400
     })
   });
-  
-  Backbone.LabelButton = Backbone.Button.extend({
-    defaults: _.extend({}, Backbone.Button.prototype.defaults, {
-      x: 432,
-      y: 400,
-      width: 160,
-      height: 100,
-      backgroundColor: "transparent",
-      text: "",
-      textPadding: 12,
-      textContextAttributes: {
-        fillStyle: "#FFFFFF",
-        font: "40px arcade",
-        textBaseline: "middle",
-        fontWeight: "normal",
-        textAlign: "center"
-      },
-      easing: "easeInCubic",
-      easingTime: 400
-    })
-  });
 
-  Backbone.Scene = Backbone.Element.extend({
-    defaults: _.extend({}, Backbone.Element.prototype.defaults, {
+  Backbone.Scene = Backbone.Label.extend({
+    defaults: _.extend({}, Backbone.Label.prototype.defaults, {
       x: 0,
       y: 0,
-      width: 1024,
-      height: 768,
+      width: 640,
+      height: 960,
       backgroundColor: "#000",
       opacity: 0,
       text: "",
@@ -90,7 +69,7 @@
       easingTime: 400
     }),
     initialize: function(attributes, options) {
-      Backbone.Element.prototype.initialize.apply(this, arguments);
+      Backbone.Label.prototype.initialize.apply(this, arguments);
       this.set({
         width: Backbone.WIDTH,
         height: Backbone.HEIGHT

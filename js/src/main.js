@@ -11,6 +11,10 @@ window.START = function() {
   var canvas = document.getElementById("foreground"),
       context = canvas.getContext("2d");
 
+  // Default width is 320, as used on desktop. On mobile use 640.
+  var ratio = MOBILE ? 2 : 1;
+  canvas.width = 320 * ratio;
+  canvas.height = ratio == 1 ? 568 : 960;
   console.log("canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
   console.log("window.innerWidth=" + window.innerWidth + " window.innerHeight=" + window.innerHeight);
 
@@ -29,7 +33,7 @@ window.START = function() {
     WIDTH: canvas.width,
     OPEN_URL: window.openurl || undefined,
     ROOT_URL: ENV == "prod" ? "http://www.miamboom.com" : "",
-    RATIO: 2,
+    RATIO: ratio,
     storage: CHROME_APP ? window.chrome.storage : window.localStorage
   });
 
@@ -38,6 +42,7 @@ window.START = function() {
     initialize: function(attributes, options) {
       options || (options = {});
 
+      // Handle resizing
       window.addEventListener("resize", _.debounce(this.onResize.bind(this), 300));
       this.onResize();
       Backbone.adjustSizes();
@@ -131,6 +136,14 @@ window.START = function() {
       });
       Backbone.adjustLabelSize(this.rotateLabel);
 
+      this.rotateScene = new Backbone.Scene({
+        x: 0,
+        y: 0,
+        width: Backbone.WIDTH,
+        height: Backbone.HEIGHT,
+        opacity: 0
+      });
+
 
       // The game engine
       var engine = this.engine = new Backbone.Engine({
@@ -186,7 +199,7 @@ window.START = function() {
       this.engine.reset();
       if (this.debugPanel) this.debugPanel.clear();
 
-      this.engine.add([this.world, this.fruitLabel, this.bestScoreLabel, this.rotateLabel, this.aboutLabel, this.titleLabel]);
+      this.engine.add([this.world, this.fruitLabel, this.bestScoreLabel, this.titleLabel, this.aboutLabel, this.rotateScene, this.rotateLabel]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
       this.engine.set("clearOnDraw", true);
       this.engine.start();
@@ -300,7 +313,7 @@ window.START = function() {
       }
     },
     onResize: function() {
-      canvas.height = Backbone.MOBILE ? Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) ) : Math.min(window.innerHeight, 960);
+      canvas.height = Backbone.MOBILE ? Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) ) : Math.min(window.innerHeight, canvas.width*1.775);
       console.log("resize: canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
       Backbone.HEIGHT = canvas.height;
 
@@ -322,9 +335,8 @@ window.START = function() {
         this.startLabel.set("y", Math.round(3*(Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height)/4));
 
         var rotate = Backbone.MOBILE && window.innerHeight < window.innerWidth;
+        this.rotateScene.set("opacity", rotate ? 0.8 : 0);
         this.rotateLabel.set("opacity", rotate ? 1 : 0);
-        this.fruitLabel.set("opacity", rotate ? 0 : 1);
-        this.fruitLabel.set("opacity", rotate ? 0 : 1);
       }
     }
   });

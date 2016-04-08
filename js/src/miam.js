@@ -11,9 +11,9 @@
       y: 0,
       width: 180,
       height: 180,
-      paddingLeft: 50,
-      paddingRight: 50,
-      paddingTop: 65,
+      paddingLeft: 60,
+      paddingRight: 60,
+      paddingTop: 80,
       paddingBottom: 90,
       attackDamage: 1
     },
@@ -85,8 +85,8 @@
 
         // Eat stuff
         var b = {
-          x: x + this.get("paddingLeft"),
-          y: y + this.get("paddingTop"),
+          x: this.getLeft(true),
+          y: this.getTop(true),
           width: this.getWidth(true),
           height: this.getHeight(true)
         };
