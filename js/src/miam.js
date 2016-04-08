@@ -106,8 +106,8 @@
   Backbone.Miam2 = Backbone.Miam.extend({
     defaults: _.extend({}, Backbone.Miam.prototype.defaults, {
       spriteSheet: "miam2",
-      paddingTop: 40,
-      paddingBottom: 120,
+      paddingTop: 45,
+      paddingBottom: 130,
     })
   });
 
