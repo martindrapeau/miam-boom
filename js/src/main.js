@@ -67,6 +67,7 @@ window.START = function() {
       this.world.sprites.on("remove", this.onWorldSpriteRemoved, this);
       this.world.sprites.on("landed", this.onWorldSpriteLanded, this);
 
+      Backbone.miamSpriteName = "miam2";
 
       // GUI
       this.titleLabel = new Backbone.Label({
@@ -186,7 +187,7 @@ window.START = function() {
           x: 0,
           y: Backbone.HEIGHT - Backbone.Floor.prototype.defaults.height
         }, {
-          name: "miam",
+          name: Backbone.miamSpriteName,
           x: Backbone.WIDTH/2 - Backbone.Miam.prototype.defaults.width/2,
           y: Math.round(Backbone.HEIGHT*0.86) - Backbone.Miam.prototype.defaults.height
         }],
@@ -322,7 +323,7 @@ window.START = function() {
         this.world.sprites.each(function(sprite) {
           var name = sprite.get("name");
           switch(name) {
-            case "miam":
+            case Backbone.miamSpriteName:
               sprite.set({y: Math.round(Backbone.HEIGHT*0.86) - sprite.get("height")});
               break;
             case "floor":

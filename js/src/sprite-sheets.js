@@ -11,6 +11,16 @@
     tileColumns: 4,
     tileRows: 1
   }, {
+    id: "miam2",
+    img: "#miam",
+    imgUrl: "img/miam.png",
+    x: 0,
+    y: 360,
+    tileWidth: 180,
+    tileHeight: 180,
+    tileColumns: 4,
+    tileRows: 1
+  }, {
     id: "fruits",
     img: "#miam",
     imgUrl: "img/miam.png",
