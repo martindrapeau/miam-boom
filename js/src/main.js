@@ -67,7 +67,7 @@ window.START = function() {
       this.world.sprites.on("remove", this.onWorldSpriteRemoved, this);
       this.world.sprites.on("landed", this.onWorldSpriteLanded, this);
 
-      Backbone.miamSpriteName = "miam2";
+      Backbone.miamSpriteName || (Backbone.miamSpriteName = "miam");
 
       // GUI
       this.titleLabel = new Backbone.Label({
