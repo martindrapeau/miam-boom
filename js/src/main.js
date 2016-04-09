@@ -69,6 +69,10 @@ window.START = function() {
 
       Backbone.miamSpriteName || (Backbone.miamSpriteName = "miam");
 
+      this.ai = new Backbone.Ai({}, {
+        world: this.world
+      });
+
       // GUI
       this.titleLabel = new Backbone.Label({
         x: 0,
@@ -200,18 +204,17 @@ window.START = function() {
       this.engine.reset();
       if (this.debugPanel) this.debugPanel.clear();
 
-      this.engine.add([this.world, this.fruitLabel, this.bestScoreLabel, this.titleLabel, this.aboutLabel, this.rotateScene, this.rotateLabel]);
+      this.engine.add([this.ai, this.world, this.fruitLabel, this.bestScoreLabel, this.titleLabel, this.aboutLabel, this.rotateScene, this.rotateLabel]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
       this.engine.set("clearOnDraw", true);
       this.engine.start();
 
       this.world.set("state", "play");
-      this.throwFruit(options);
+      this.ai.throwFruit(options);
 
       return this;
     },
     pause: function() {
-      this.world.clearTimeout(this.throwFruitTimeoutId);
       this.world.set("state", "pause");
       this.engine.add(this.startLabel);
       this.listenTo(this.engine, "touchstart", this.start);
@@ -220,37 +223,6 @@ window.START = function() {
       if (this.rotateLabel.get("opacity") == 1) return;
       this.stopListening(this.engine, "touchstart", this.start);
       this.setup();
-    },
-    throwFruit: function(options) {
-      options || (options = {});
-      var hero = this.world.getHero();
-
-      if (hero && !hero.isDisabled() && !options.skip) {
-
-        var index = Math.floor((Backbone.fruitNames.length-0.01)*Math.random()),
-            fruitName = Backbone.fruitNames[index],
-            fruitClass = Backbone[_.classify(fruitName)],
-            halfWidth = fruitClass.prototype.defaults.width/2,
-            dir = Math.random() < 0.5 ? "right" : "left",
-            x =  dir == "right" ? -halfWidth : Backbone.WIDTH-halfWidth,
-            y = Math.round(100*Math.random()),
-            yVelocity = Math.round(-500*Math.random());
-
-        var fruit = new fruitClass({
-          x: x,
-          y: y,
-          state: fruitClass.prototype.buildState("fall", dir),
-          yVelocity: yVelocity
-        });
-
-        this.world.add(fruit);
-      }
-
-      var fruits = this.world.get("fruits"),
-          startDelay = Math.max(150, 350 - fruits * 2),
-          deltaDelay = Math.max(500, 1500 - fruits * 20),
-          delay = Math.floor(startDelay + deltaDelay*Math.random());
-      this.throwFruitTimeoutId = this.world.setTimeout(this.throwFruit.bind(this), delay);
     },
     onWorldSpriteRemoved: function(sprite, world, options) {
       var name = sprite.get("name"),
@@ -262,7 +234,7 @@ window.START = function() {
       if (options && options.eaten) {
         if (name == "bomb") {
           hero.set("state", "dead");
-          this.world.clearTimeout(this.throwFruitTimeoutId);
+          this.ai.stop();
           this.world.setTimeout(this.pause.bind(this), 1500);
         } else {
           var fruits = this.world.get("fruits") + 1;
@@ -279,7 +251,7 @@ window.START = function() {
 
       if (name != "bomb") {
         hero.set("state", "sad");
-        this.world.clearTimeout(this.throwFruitTimeoutId);
+        this.ai.stop();
         this.world.setTimeout(this.pause.bind(this), 1500);
       }
     },
