@@ -750,6 +750,20 @@
     isAnimated: function() {
       return !!this._animation;
     },
+    wait: function(callback, delay) {
+      this._animation = "wait";
+      this._startTime = _.now();
+      this._callback = callback;
+      this._animationUpdateFn = function(dt) {
+        var now = _.now(),
+            easingTime = delay || this.get("easingTime");
+        if (now >= this._startTime + easingTime) {
+          if (typeof this._callback == "function") _.defer(this._callback.bind(this));
+          this.clearAnimation();
+        }
+      };
+      return this;
+    },
     moveTo: function(x, y, onEnd, onAnimate) {
       this._animation = "move";
       this._startTime = _.now();

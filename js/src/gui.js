@@ -56,6 +56,47 @@
     })
   });
 
+  Backbone.Panel = Backbone.Label.extend({
+    defaults: _.extend({}, Backbone.Label.prototype.defaults, {
+      x: 0,
+      y: 0,
+      width: 320,
+      height: Backbone.HEIGHT/2,
+      backgroundColor: "#000",
+      opacity: 0.8,
+      text: "",
+      easing: "easeInCubic",
+      easingTime: 400
+    }),
+    initialize: function(attributes, options) {
+      Backbone.Label.prototype.initialize.apply(this, arguments);
+      this.set({
+        y: -Backbone.HEIGHT/2,
+        showX: 0,
+        showY: 0,
+        hideX: 0,
+        hideY: -Backbone.HEIGHT/2,
+        width: Backbone.WIDTH,
+        height: Backbone.HEIGHT/2
+      });
+      options || (options = {});
+      this.world = options.world;
+      this.music = options.music;
+      _.bindAll(this, "show", "hide");
+    },
+    show: function(callback) {
+      this.moveTo(this.get("showX"), this.get("showY"), callback);
+      return this;
+    },
+    hide: function(callback) {
+      this.moveTo(this.get("hideX"), this.get("hideY"), callback);
+      return this;
+    },
+    onRender: function(context, options) {
+
+    }
+  });
+
   Backbone.Scene = Backbone.Label.extend({
     defaults: _.extend({}, Backbone.Label.prototype.defaults, {
       x: 0,
@@ -75,12 +116,7 @@
         height: Backbone.HEIGHT
       });
       options || (options = {});
-      this.saved = options.saved;
       this.world = options.world;
-      this.levels = options.levels;
-      this.pauseButton = options.pauseButton;
-      this.input = options.input;
-      this.music = options.music;
       _.bindAll(this, "enter", "exit");
     },
     enter: function(callback) {
@@ -92,6 +128,49 @@
       this.set("opacity", 1);
       this.fadeOut(callback);
       return this;
+    }
+  });
+
+  Backbone.StartLabel = Backbone.Label.extend({
+    defaults: _.extend({}, Backbone.Label.prototype.defaults, {
+      state: "ready",
+      easingTime: 250
+    }),
+    start: function(options) {
+      options || (options = {});
+      var label = window._lang.get("readyToEatFruit");
+      if (!options.start) label = this.findBestLabel();
+      this.set({
+        ready: false,
+        text: label,
+        opacity: 1
+      });
+      this.fadeIn(function() {
+        this.wait(function() {
+          this.fadeOut(this.ready);
+        }, 1500);
+      });
+    },
+    ready: function() {
+      this.set({
+        ready: true,
+        text: window._lang.get("touchToStart")
+      });
+      this.fadeIn();
+    },
+    findBestLabel: function() {
+      var best = this.bestScoreLabel.get("fruits"),
+          score = this.fruitLabel.get("fruits"),
+          key = "youDroppedAFruit",
+          hero = this.world.getHero();
+
+      if (hero && hero.get("state") == "dead") {
+        key = Math.random() >= 0.5 ? "ouchStartHurts" : "burntToACrisp";
+      } else {
+
+      }
+
+      return window._lang.get(key);
     }
   });
 

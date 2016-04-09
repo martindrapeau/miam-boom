@@ -12,9 +12,9 @@ window.START = function() {
       context = canvas.getContext("2d");
 
   // Default width is 320, as used on desktop. On mobile use 640.
-  var ratio = MOBILE ? 2 : 1;
+  var ratio = MOBILE || window.innerHeight >= 960 ? 2 : 1;
   canvas.width = 320 * ratio;
-  canvas.height = ratio == 1 ? 568 : 960;
+  canvas.height = ratio * 568;
   console.log("canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
   console.log("window.innerWidth=" + window.innerWidth + " window.innerHeight=" + window.innerHeight);
 
@@ -86,9 +86,9 @@ window.START = function() {
       });
       Backbone.adjustLabelSize(this.titleLabel);
 
-      this.startLabel = new Backbone.Label({
-        x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
-        y: Backbone.HEIGHT/2 - Backbone.Label.prototype.defaults.height,
+      this.startLabel = new Backbone.StartLabel({
+        x: Backbone.WIDTH/2 - Backbone.StartLabel.prototype.defaults.width/2,
+        y: Backbone.HEIGHT/2 - Backbone.StartLabel.prototype.defaults.height,
         text: window._lang.get("touchToStart"),
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes)
       });
@@ -133,6 +133,10 @@ window.START = function() {
       this.world.on("change:state", this.updateBestScore, this);
       Backbone.adjustLabelSize(this.bestScoreLabel);
 
+      this.startLabel.world = this.world;
+      this.startLabel.fruitLabel = this.fruitLabel;
+      this.startLabel.bestScoreLabel = this.bestScoreLabel;
+
       this.rotateLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
         y: Backbone.Label.prototype.defaults.height,
@@ -154,11 +158,14 @@ window.START = function() {
       var engine = this.engine = new Backbone.Engine({
         music: !!JSON.parse(Backbone.storage[Backbone.LSKEY_MUSIC] !== undefined ? Backbone.storage[Backbone.LSKEY_MUSIC] : "true"),
         sfx: !!JSON.parse(Backbone.storage[Backbone.LSKEY_SFX] !== undefined ? Backbone.storage[Backbone.LSKEY_SFX] : "true"),
-        tapMoveTolerance: 50
+        tapMoveTolerance: 50,
+        clearOnDraw: true
       }, {
         canvas: canvas,
         debugPanel: this.debugPanel
       });
+
+      this.engine.add([this.ai, this.world, this.fruitLabel, this.bestScoreLabel, this.titleLabel, this.aboutLabel, this.startLabel, this.rotateScene, this.rotateLabel]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
 
       this.listenTo(this.engine, "change:music", function() {
@@ -173,12 +180,15 @@ window.START = function() {
         audio.trigger("attach");
       });
 
+
       // Get things going
       this.onResize();
       this.setup({skip:true});
-      this.pause();
+      this.pause({start:true});
     },
     setup: function(options) {
+      options || (options = {});
+
       this.engine.stop();
       this.world.set("state", "pause");
 
@@ -201,28 +211,28 @@ window.START = function() {
       this.world.spawnSprites();
       this.world.getHero().debugPanel = this.debugPanel;
 
-      this.engine.reset();
       if (this.debugPanel) this.debugPanel.clear();
-
-      this.engine.add([this.ai, this.world, this.fruitLabel, this.bestScoreLabel, this.titleLabel, this.aboutLabel, this.rotateScene, this.rotateLabel]);
-      if (this.debugPanel) this.engine.add(this.debugPanel);
-      this.engine.set("clearOnDraw", true);
       this.engine.start();
 
-      this.world.set("state", "play");
-      this.ai.throwFruit(options);
+      function go() {
+        this.world.set("state", "play");
+        this.ai.throwFruit(options);
+      }
+      go.call(this);
 
       return this;
     },
-    pause: function() {
+    pause: function(options) {
+      options || (options = {});
       this.world.set("state", "pause");
-      this.engine.add(this.startLabel);
+      this.startLabel.start(options);
       this.listenTo(this.engine, "touchstart", this.start);
     },
     start: function() {
       if (this.rotateLabel.get("opacity") == 1) return;
       this.stopListening(this.engine, "touchstart", this.start);
       this.setup();
+      this.startLabel.fadeOut();
     },
     onWorldSpriteRemoved: function(sprite, world, options) {
       var name = sprite.get("name"),
