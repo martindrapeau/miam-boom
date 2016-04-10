@@ -46,6 +46,7 @@
       options || (options = {});
       this.scoreLabel = options.scoreLabel;
       this.bestScoreLabel = options.bestScoreLabel;
+
       this.bestScoreInSession = 0;
       this.lastScore = 0;
     },
@@ -53,7 +54,7 @@
       options || (options = {});
       this.set({
         ready: false,
-        text: this.findBestLabel(),
+        text: this.findBestLabel(options),
         opacity: 1
       });
       this.fadeIn(function() {
@@ -73,14 +74,16 @@
       });
       this.fadeIn();
     },
-    findBestLabel: function() {
+    findBestLabel: function(options) {
+      options || (options = {});
+
       var best = this.bestScoreLabel.get("fruits"),
           score = this.scoreLabel.get("fruits"),
           key = "youDroppedAFruit",
           hero = this.world.getHero(),
           heroState = hero ? hero.get("state") : null;
 
-      if (heroState == "idle") {
+      if (options.start) {
         key = readyKeys.next();
       }
       else if (heroState == "dead") {
@@ -96,11 +99,11 @@
         else if (score >= 50 && score < 60) {
           key = "above50YourAnAce";
         }
+        else if (score < 10 && this.bestScoreInSession >= 10) {
+          key = below10Keys.next();
+        }
         else if (score > this.bestScoreInSession) {
           key = improveKeys.next();
-        }
-        else if (score < 10) {
-          key = below10Keys.next();
         }
         else {
           key = regressKeys.next();
