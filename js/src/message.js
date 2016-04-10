@@ -5,7 +5,8 @@
       failKeys = ["pleaseCatchTheFruit", "notEvenOne", "fail", "aBabyCouldDoBetter"],
       improveKeys = ["notBad", "niceWork", "gettingBetter", "greatJob", "wayToGo"],
       beatBestKeys = ["newBest", "awesome", "unbelievable", "youAreIncredible"],
-      regressKeys = ["betterNextTime", "practiceMakesPerfect", "needsImprovement", "workInProcess", "canYouDoBetter"];
+      regressKeys = ["betterNextTime", "practiceMakesPerfect", "needsImprovement", "workInProcess", "canYouDoBetter"],
+      below10Keys = ["tryToGetAbove10", "below10IsNotGreat", "notEven10"];
 
   function nextSkipFirst() {
     this.nextIndex || (this.nextIndex = 0);
@@ -24,19 +25,30 @@
     this.nextIndex += 1;
     return result;
   }
-  failKeys.next = nextSkipFirst.bind(failKeys);
-  improveKeys.next = nextSkipFirst.bind(improveKeys);
-  beatBestKeys.next = nextSkipFirst.bind(beatBestKeys);
-  regressKeys.next = nextSkipFirst.bind(regressKeys);
+  failKeys.next = next.bind(failKeys);
+  improveKeys.next = next.bind(improveKeys);
+  beatBestKeys.next = next.bind(beatBestKeys);
+  regressKeys.next = next.bind(regressKeys);
+  below10Keys.next = next.bind(below10Keys);
 
 
   Backbone.Message = Backbone.Label.extend({
     defaults: _.extend({}, Backbone.Label.prototype.defaults, {
       name: "message",
       state: "ready",
-      easingTime: 250
+      easingTime: 250,
+      text: window._lang.get("touchToStart"),
+      textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes)
     }),
-    bestInSession: 0,
+    initialize: function(attributes, options) {
+      Backbone.Label.prototype.initialize.apply(this, arguments);
+
+      options || (options = {});
+      this.scoreLabel = options.scoreLabel;
+      this.bestScoreLabel = options.bestScoreLabel;
+      this.bestScoreInSession = 0;
+      this.lastScore = 0;
+    },
     start: function(options) {
       options || (options = {});
       this.set({
@@ -60,8 +72,7 @@
     },
     findBestLabel: function() {
       var best = this.bestScoreLabel.get("fruits"),
-          score = this.fruitLabel.get("fruits"),
-          last = this.fruitLabel.get("lastFruits"),
+          score = this.scoreLabel.get("fruits"),
           key = "youDroppedAFruit",
           hero = this.world.getHero(),
           heroState = hero ? hero.get("state") : null;
@@ -71,22 +82,30 @@
       }
       else if (heroState == "dead") {
         key = deadKeys.next();
-      } else {
+      }
+      else {
         if (score > best) {
           key = beatBestKeys.next();
         }
         else if (score == 0) {
           key = failKeys.next();
         }
-        else if (score > this.bestInSession) {
+        else if (score >= 50 && score < 60) {
+          key = "above50YourAnAce";
+        }
+        else if (score > this.bestScoreInSession) {
           key = improveKeys.next();
+        }
+        else if (score < 10) {
+          key = below10Keys.next();
         }
         else {
           key = regressKeys.next();
         }
       }
 
-      this.bestInSession = Math.max(score, this.bestInSession);
+      this.lastScore = score;
+      this.bestScoreInSession = Math.max(score, this.bestScoreInSession);
 
       return window._lang.get(key);
     }

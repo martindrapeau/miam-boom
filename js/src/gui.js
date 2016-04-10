@@ -53,8 +53,75 @@
       },
       easing: "easeInCubic",
       easingTime: 400
-    })
+    }),
+    initialize: function(attributes, options) {
+      Backbone.Element.prototype.initialize.apply(this, arguments);
+      options || (options = {});
+      this.world = options.world;
+      this.music = options.music;
+    }
   });
+
+  Backbone.ScoreLabel = Backbone.Label.extend({
+    defaults: _.extend({}, Backbone.Label.prototype.defaults, {
+      name: "score",
+      text: "",
+      fruits: 0,
+      textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
+        font: "80px arcade"
+      })
+    }),
+    initialize: function(attributes, options) {
+      Backbone.Label.prototype.initialize.apply(this, arguments);
+      this.listenTo(this.world, "change:fruits", this.updateScore);
+    },
+    updateScore: function() {
+      var fruits = this.world.get("fruits");
+      this.set({
+        fruits: fruits,
+        text: fruits > 0 ? fruits : ""
+      });
+      return this;
+    }
+  });
+
+  Backbone.BestScoreLabel = Backbone.Label.extend({
+    defaults: _.extend({}, Backbone.Label.prototype.defaults, {
+      name: "best-score",
+        fruits: 0,
+        text: "",
+        textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
+          font: "16px arcade",
+          textAlign: "right",
+          fillStyle: "#D0D0D0"
+        })
+    }),
+    initialize: function(attributes, options) {
+      Backbone.Label.prototype.initialize.apply(this, arguments);
+
+      var bestScore = JSON.parse(Backbone.storage[Backbone.LSKEY_BEST_SCORE] || "0");
+      this.set({
+        fruits: bestScore,
+        text: bestScore > 0 ? window._lang.get("bestScore").replace("{0}", bestScore) : ""
+      });
+
+      this.listenTo(this.world, "change:fruits", this.updateScore);
+    },
+    updateScore: function() {
+      var state = this.world.get("state"),
+          newScore = this.world.get("fruits"),
+          bestScore = this.get("fruits");
+      if (state == "pause" && newScore > bestScore) {
+        this.set({
+          fruits: newScore,
+          text: newScore > 0 ? window._lang.get("bestScore").replace("{0}", newScore) : ""
+        });
+        Backbone.storage[Backbone.LSKEY_BEST_SCORE] = JSON.stringify(newScore);
+      }
+      return this;
+    }
+  });
+
 
   Backbone.Panel = Backbone.Label.extend({
     defaults: _.extend({}, Backbone.Label.prototype.defaults, {
@@ -79,9 +146,6 @@
         width: Backbone.WIDTH,
         height: Backbone.HEIGHT/2
       });
-      options || (options = {});
-      this.world = options.world;
-      this.music = options.music;
       _.bindAll(this, "show", "hide");
     },
     show: function(callback) {
@@ -115,8 +179,6 @@
         width: Backbone.WIDTH,
         height: Backbone.HEIGHT
       });
-      options || (options = {});
-      this.world = options.world;
       _.bindAll(this, "enter", "exit");
     },
     enter: function(callback) {

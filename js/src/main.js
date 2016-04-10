@@ -86,14 +86,6 @@ window.START = function() {
       });
       Backbone.adjustLabelSize(this.titleLabel);
 
-      this.message = new Backbone.Message({
-        x: Backbone.WIDTH/2 - Backbone.Message.prototype.defaults.width/2,
-        y: Backbone.HEIGHT/2 - Backbone.Message.prototype.defaults.height,
-        text: window._lang.get("touchToStart"),
-        textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes)
-      });
-      Backbone.adjustLabelSize(this.message);
-
       this.aboutLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
         y: 80,
@@ -106,36 +98,31 @@ window.START = function() {
       });
       Backbone.adjustLabelSize(this.aboutLabel);
 
-      this.fruitLabel = new Backbone.Label({
-        x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
-        y: Math.round(Backbone.HEIGHT*0.22),
-        text: "",
-        fruits: 0,
-        textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
-          font: "80px arcade"
-        })
+      this.scoreLabel = new Backbone.ScoreLabel({
+        x: Backbone.WIDTH/2 - Backbone.ScoreLabel.prototype.defaults.width/2,
+        y: Math.round(Backbone.HEIGHT*0.22)
+      }, {
+        world: this.world
       });
-      this.world.on("change:fruits", this.updateCurrentScore, this);
-      Backbone.adjustLabelSize(this.fruitLabel);
+      Backbone.adjustLabelSize(this.scoreLabel);
 
-      var bestScore = JSON.parse(Backbone.storage[Backbone.LSKEY_BEST_SCORE] || "0");
-      this.bestScoreLabel = new Backbone.Label({
-        x: Backbone.WIDTH - 10 - Backbone.Label.prototype.defaults.width,
-        y: 0,
-        fruits: bestScore,
-        text: bestScore > 0 ? window._lang.get("bestScore").replace("{0}", bestScore) : "",
-        textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
-          font: "16px arcade",
-          textAlign: "right",
-          fillStyle: "#D0D0D0"
-        })
+      this.bestScoreLabel = new Backbone.BestScoreLabel({
+        x: Backbone.WIDTH - 10 - Backbone.BestScoreLabel.prototype.defaults.width,
+        y: 0
+      }, {
+        world: this.world
       });
-      this.world.on("change:state", this.updateBestScore, this);
       Backbone.adjustLabelSize(this.bestScoreLabel);
 
-      this.message.world = this.world;
-      this.message.fruitLabel = this.fruitLabel;
-      this.message.bestScoreLabel = this.bestScoreLabel;
+      this.message = new Backbone.Message({
+        x: Backbone.WIDTH/2 - Backbone.Message.prototype.defaults.width/2,
+        y: Backbone.HEIGHT/2 - Backbone.Message.prototype.defaults.height
+      }, {
+        world: this.world,
+        scoreLabel: this.scoreLabel,
+        bestScoreLabel: this.bestScoreLabel
+      });
+      Backbone.adjustLabelSize(this.message);
 
       this.rotateLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
@@ -165,7 +152,7 @@ window.START = function() {
         debugPanel: this.debugPanel
       });
 
-      this.engine.add([this.ai, this.world, this.fruitLabel, this.bestScoreLabel, this.titleLabel, this.aboutLabel, this.message, this.rotateScene, this.rotateLabel]);
+      this.engine.add([this.ai, this.world, this.scoreLabel, this.bestScoreLabel, this.titleLabel, this.aboutLabel, this.message, this.rotateScene, this.rotateLabel]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
 
       this.listenTo(this.engine, "change:music", function() {
@@ -187,8 +174,6 @@ window.START = function() {
       this.pause({start:true});
     },
     setup: function(options) {
-      options || (options = {});
-
       this.engine.stop();
       this.world.set("state", "pause");
 
@@ -223,15 +208,14 @@ window.START = function() {
       return this;
     },
     pause: function(options) {
-      options || (options = {});
       this.world.set("state", "pause");
       this.message.start(options);
       this.listenTo(this.engine, "touchstart", this.start);
     },
-    start: function() {
+    start: function(options) {
       if (this.rotateLabel.get("opacity") == 1) return;
       this.stopListening(this.engine, "touchstart", this.start);
-      this.setup();
+      this.setup(options);
       this.message.fadeOut();
     },
     onWorldSpriteRemoved: function(sprite, world, options) {
@@ -264,28 +248,6 @@ window.START = function() {
         this.ai.stop();
         this.world.setTimeout(this.pause.bind(this), 1500);
       }
-    },
-    updateCurrentScore: function() {
-      var fruits = this.world.get("fruits");
-      this.fruitLabel.set({
-        fruits: fruits,
-        lastFruits: this.fruitLabel.get("fruits"),
-        text: fruits > 0 ? fruits : ""
-      });
-      return this;
-    },
-    updateBestScore: function() {
-      var state = this.world.get("state"),
-          newScore = this.world.get("fruits"),
-          bestScore = this.bestScoreLabel.get("fruits");
-      if (state == "pause" && newScore > bestScore) {
-        this.bestScoreLabel.set({
-          fruits: newScore,
-          text: newScore > 0 ? window._lang.get("bestScore").replace("{0}", newScore) : ""
-        });
-        Backbone.storage[Backbone.LSKEY_BEST_SCORE] = JSON.stringify(newScore);
-      }
-      return this;
     },
     handleSetLanguage: function(language) {
       var deviceLang = Backbone.storage[Backbone.LSKEY_DEVICE_LANG],
