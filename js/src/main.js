@@ -18,6 +18,8 @@ window.START = function() {
   console.log("canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
   console.log("window.innerWidth=" + window.innerWidth + " window.innerHeight=" + window.innerHeight);
 
+
+  // Globals are saved in the Backbone namespace
   _.extend(Backbone, {
     ENV: ENV,
     COCOON: COCOON,
@@ -57,7 +59,7 @@ window.START = function() {
       // Create our sprite sheets and attach them to existing sprite classes
       this.spriteSheets = new Backbone.SpriteSheetCollection(Backbone.spriteSheetDefinitions).attachToSpriteClasses();
 
-      // Create the debug panel
+      // Create the debug panel. Comment out not to have one.
       //this.debugPanel = ENV == "dev" ? new Backbone.DebugPanel({}, {color: "#fff"}) : null;
 
       // Our world
@@ -67,11 +69,15 @@ window.START = function() {
       this.world.sprites.on("remove", this.onWorldSpriteRemoved, this);
       this.world.sprites.on("landed", this.onWorldSpriteLanded, this);
 
+      // Our hero
       Backbone.miamSpriteName || (Backbone.miamSpriteName = "miam");
 
+
+      // Fruit throwing AI
       this.ai = new Backbone.Ai({}, {
         world: this.world
       });
+
 
       // GUI
       this.titleLabel = new Backbone.Label({
@@ -209,14 +215,14 @@ window.START = function() {
     },
     pause: function(options) {
       this.world.set("state", "pause");
-      this.message.start(options);
+      this.message.show(options);
       this.listenTo(this.engine, "touchstart", this.start);
     },
     start: function(options) {
       if (this.rotateLabel.get("opacity") == 1) return;
       this.stopListening(this.engine, "touchstart", this.start);
       this.setup(options);
-      this.message.fadeOut();
+      this.message.hide();
     },
     onWorldSpriteRemoved: function(sprite, world, options) {
       var name = sprite.get("name"),

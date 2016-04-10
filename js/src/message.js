@@ -49,7 +49,7 @@
       this.bestScoreInSession = 0;
       this.lastScore = 0;
     },
-    start: function(options) {
+    show: function(options) {
       options || (options = {});
       this.set({
         ready: false,
@@ -62,6 +62,9 @@
             this.fadeOut(this.ready);
           }, 1500);
       });
+    },
+    hide: function() {
+      this.fadeOut();
     },
     ready: function() {
       this.set({
