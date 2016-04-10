@@ -269,6 +269,7 @@ window.START = function() {
       var fruits = this.world.get("fruits");
       this.fruitLabel.set({
         fruits: fruits,
+        lastFruits: this.fruitLabel.get("fruits"),
         text: fruits > 0 ? fruits : ""
       });
       return this;
