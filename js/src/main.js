@@ -86,13 +86,13 @@ window.START = function() {
       });
       Backbone.adjustLabelSize(this.titleLabel);
 
-      this.startLabel = new Backbone.StartLabel({
-        x: Backbone.WIDTH/2 - Backbone.StartLabel.prototype.defaults.width/2,
-        y: Backbone.HEIGHT/2 - Backbone.StartLabel.prototype.defaults.height,
+      this.message = new Backbone.Message({
+        x: Backbone.WIDTH/2 - Backbone.Message.prototype.defaults.width/2,
+        y: Backbone.HEIGHT/2 - Backbone.Message.prototype.defaults.height,
         text: window._lang.get("touchToStart"),
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes)
       });
-      Backbone.adjustLabelSize(this.startLabel);
+      Backbone.adjustLabelSize(this.message);
 
       this.aboutLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
@@ -133,9 +133,9 @@ window.START = function() {
       this.world.on("change:state", this.updateBestScore, this);
       Backbone.adjustLabelSize(this.bestScoreLabel);
 
-      this.startLabel.world = this.world;
-      this.startLabel.fruitLabel = this.fruitLabel;
-      this.startLabel.bestScoreLabel = this.bestScoreLabel;
+      this.message.world = this.world;
+      this.message.fruitLabel = this.fruitLabel;
+      this.message.bestScoreLabel = this.bestScoreLabel;
 
       this.rotateLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
@@ -165,7 +165,7 @@ window.START = function() {
         debugPanel: this.debugPanel
       });
 
-      this.engine.add([this.ai, this.world, this.fruitLabel, this.bestScoreLabel, this.titleLabel, this.aboutLabel, this.startLabel, this.rotateScene, this.rotateLabel]);
+      this.engine.add([this.ai, this.world, this.fruitLabel, this.bestScoreLabel, this.titleLabel, this.aboutLabel, this.message, this.rotateScene, this.rotateLabel]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
 
       this.listenTo(this.engine, "change:music", function() {
@@ -216,7 +216,7 @@ window.START = function() {
 
       function go() {
         this.world.set("state", "play");
-        this.ai.throwFruit(options);
+        this.ai.start(options);
       }
       go.call(this);
 
@@ -225,14 +225,14 @@ window.START = function() {
     pause: function(options) {
       options || (options = {});
       this.world.set("state", "pause");
-      this.startLabel.start(options);
+      this.message.start(options);
       this.listenTo(this.engine, "touchstart", this.start);
     },
     start: function() {
       if (this.rotateLabel.get("opacity") == 1) return;
       this.stopListening(this.engine, "touchstart", this.start);
       this.setup();
-      this.startLabel.fadeOut();
+      this.message.fadeOut();
     },
     onWorldSpriteRemoved: function(sprite, world, options) {
       var name = sprite.get("name"),
@@ -316,7 +316,7 @@ window.START = function() {
         });
 
         this.aboutLabel.set("y", Backbone.HEIGHT - this.aboutLabel.get("height"));
-        this.startLabel.set("y", Math.round(3*(Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height)/4));
+        this.message.set("y", Math.round(3*(Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height)/4));
 
         var rotate = Backbone.MOBILE && window.innerHeight < window.innerWidth;
         this.rotateScene.set("opacity", rotate ? 0.8 : 0);

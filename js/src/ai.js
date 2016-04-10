@@ -6,17 +6,23 @@
       state: "idle"
     },
     initialize: function(attributes, options) {
+      this._throwTime = undefined;
+      this._throwDelay = undefined;
       this.world = options.world;
-      this.listenTo(this.world, "change:state", this.onChangeState);
+      this.listenTo(this.world, "change:state", this.onWorldChangeState);
     },
-    onChangeState: function() {
+    onWorldChangeState: function() {
       var state = this.world.get("state");
       if (state == "pause") this.stop();
     },
+    start: function(options) {
+      this.throwFruit(options);
+    },
     stop: function() {
-      this.world.clearTimeout(this.throwFruitTimeoutId);
+      this._throwDelay = undefined;
     },
     update: function(dt) {
+      if (this._throwTime && this._throwDelay && _.now() > this._throwTime + this._throwDelay) this.throwFruit();
       return false;
     },
     throwFruit: function(options) {
@@ -48,7 +54,8 @@
           startDelay = Math.max(150, 350 - fruits * 2),
           deltaDelay = Math.max(500, 1500 - fruits * 20),
           delay = Math.floor(startDelay + deltaDelay*Math.random());
-      this.throwFruitTimeoutId = this.world.setTimeout(this.throwFruit.bind(this), delay);
+      this._throwTime = _.now();
+      this._throwDelay = delay;
     },
     draw: function() {},
     onDraw: function() {}
