@@ -80,18 +80,6 @@ window.START = function() {
 
 
       // GUI
-      this.titleLabel = new Backbone.Label({
-        x: 0,
-        y: 0,
-        text: window._lang.get("title"),
-        fruits: 0,
-        textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
-          font: "20px arcade",
-          textAlign: "left"
-        })
-      });
-      Backbone.adjustLabelSize(this.titleLabel);
-
       this.aboutLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
         y: 80,
@@ -129,6 +117,15 @@ window.START = function() {
         bestScoreLabel: this.bestScoreLabel
       });
       Backbone.adjustLabelSize(this.message);
+
+      this.titleLabel = new Backbone.TitleLabel({
+        x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
+        y: Math.round(Backbone.HEIGHT*0.22),
+      }, {
+        world: this.world,
+        message: this.message
+      });
+      Backbone.adjustLabelSize(this.titleLabel);
 
       this.rotateLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
@@ -178,6 +175,7 @@ window.START = function() {
       this.onResize();
       this.setup({skip:true});
       this.pause({start:true});
+      this.titleLabel.show({start:true});
     },
     setup: function(options) {
       this.engine.stop();
@@ -214,8 +212,12 @@ window.START = function() {
       return this;
     },
     pause: function(options) {
+      options || (options = {});
       this.world.set("state", "pause");
-      this.message.show(options);
+      if (options.start)
+        this.titleLabel.show();
+      else
+        this.message.show(options);
       this.listenTo(this.engine, "touchstart", this.start);
     },
     start: function(options) {
@@ -285,6 +287,8 @@ window.START = function() {
 
         this.aboutLabel.set("y", Backbone.HEIGHT - this.aboutLabel.get("height"));
         this.message.set("y", Math.round(3*(Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height)/4));
+        this.scoreLabel.set("y", Math.round(Backbone.HEIGHT*0.22));
+        this.titleLabel.set("y", Math.round(Backbone.HEIGHT*0.22));
 
         var rotate = Backbone.MOBILE && window.innerHeight < window.innerWidth;
         this.rotateScene.set("opacity", rotate ? 0.8 : 0);

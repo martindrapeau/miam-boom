@@ -59,6 +59,12 @@
       options || (options = {});
       this.world = options.world;
       this.music = options.music;
+    },
+    show: function() {
+      if (this.get("opacity") != 1) this.fadeIn();
+    },
+    hide: function() {
+      if (this.get("opacity")) this.fadeOut();
     }
   });
 

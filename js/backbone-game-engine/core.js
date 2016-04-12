@@ -750,7 +750,7 @@
     isAnimated: function() {
       return !!this._animation;
     },
-    wait: function(callback, delay) {
+    wait: function(delay, callback) {
       this._animation = "wait";
       this._startTime = _.now();
       this._callback = callback;

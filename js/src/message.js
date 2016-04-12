@@ -59,13 +59,10 @@
       });
       this.fadeIn(function() {
         if (!options.start)
-          this.wait(function() {
+          this.wait(1500, function() {
             this.fadeOut(this.ready);
-          }, 1500);
+          });
       });
-    },
-    hide: function() {
-      this.fadeOut();
     },
     ready: function() {
       this.set({
