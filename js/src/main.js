@@ -288,7 +288,7 @@ window.START = function() {
         this.aboutLabel.set("y", Backbone.HEIGHT - this.aboutLabel.get("height"));
         this.message.set("y", Math.round(3*(Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height)/4));
         this.scoreLabel.set("y", Math.round(Backbone.HEIGHT*0.22));
-        this.titleLabel.set("y", Math.round(Backbone.HEIGHT*0.22));
+        if (!this.titleLabel.isAnimated() && this.titleLabel.get("y") != 0) this.titleLabel.set("y", Math.round(Backbone.HEIGHT*0.22));
 
         var rotate = Backbone.MOBILE && window.innerHeight < window.innerWidth;
         this.rotateScene.set("opacity", rotate ? 0.8 : 0);
