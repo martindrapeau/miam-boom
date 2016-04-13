@@ -77,7 +77,7 @@
         key = "touchToStart";
       }
       else if (heroState == "dead") {
-        key = readyKeys.next();
+        key = deadKeys.next();
       }
       else {
         if (score > best) {
@@ -89,15 +89,15 @@
         else if (score >= 50 && score < 60) {
           key = "above50YourAnAce";
         }
-        else if (score < 10 && this.bestScoreInSession >= 10) {
+        else if (score < 10) {
           key = below10Keys.next();
-        }
-        else if (score > this.bestScoreInSession) {
-          key = improveKeys.next();
         }
         else if (options.interlude) {
           key = improveKeys.next();
         }
+        /*else if (score > this.bestScoreInSession) {
+          key = improveKeys.next();
+        }*/
         else {
           key = regressKeys.next();
         }
