@@ -1,5 +1,19 @@
 (function() {
 
+
+  var heuristicNames = ["random", "rain", "sirup", "random", "rainleft", "rainright", "up"];
+  heuristicNames.index = 9;
+  heuristicNames.next = function() {
+    var index = this.index;
+    this.index += 1;
+    if (this.index >= this.length) this.index = 0;
+    return this[index];
+  }.bind(heuristicNames);
+  heuristicNames.reset = function() {
+    this.index = 5;
+  }.bind(heuristicNames);
+
+
   Backbone.Ai = Backbone.Model.extend({
     defaults: {
       name: "ai",
@@ -57,7 +71,7 @@
             x: this._sirupX,
             y: -fruitClass.prototype.defaults.height,
             state: fruitClass.prototype.buildState("fall", "rain", this._sirupDir),
-            yVelocity: -100
+            yVelocity: -50*Backbone.RATIO
           });
 
           this.world.add(fruit);
@@ -91,7 +105,7 @@
             x: x,
             y: -fruitClass.prototype.defaults.height,
             state: fruitClass.prototype.buildState("fall", "rain", dir),
-            yVelocity: -100
+            yVelocity: -50*Backbone.RATIO
           });
 
           this.world.add(fruit);
@@ -99,7 +113,34 @@
 
         this.delayThrowRandom();
       },
-      rain2: function(options) {
+      _raindir: function(dir, options) {
+        options || (options = {});
+
+        if (!options.skip) {
+          var index = Math.floor((Backbone.fruitNames.length-0.01)*Math.random()),
+              fruitName = Backbone.fruitNames[index],
+              fruitClass = Backbone[_.classify(fruitName)],
+              x = Backbone.WIDTH*(dir == "left" ? 0.40 : 0.00) + Math.round(Math.random() * (Backbone.WIDTH*0.60 - fruitClass.prototype.defaults.width));
+
+          var fruit = new fruitClass({
+            x: x,
+            y: -fruitClass.prototype.defaults.height,
+            state: fruitClass.prototype.buildState("fall", "rain2", dir),
+            yVelocity: -50*Backbone.RATIO
+          });
+
+          this.world.add(fruit);
+        }
+
+        this.delayThrowRandom();
+      },
+      rainleft: function(options) {
+        return this.heuristics._raindir.call(this, "left", options);
+      },
+      rainright: function(options) {
+        return this.heuristics._raindir.call(this, "right", options);
+      },
+      up: function(options) {
         options || (options = {});
 
         if (!options.skip) {
@@ -107,14 +148,13 @@
               fruitName = Backbone.fruitNames[index],
               fruitClass = Backbone[_.classify(fruitName)],
               x = Backbone.WIDTH*0.10 + Math.round(Math.random() * (Backbone.WIDTH*0.80 - fruitClass.prototype.defaults.width)),
-              dir = x < Backbone.WIDTH*0.50 ? "right" : "left",
-              mov2 = Math.random() > 0.5 ? "rain" : "rain2";
+              dir = Math.random() < 0.5 ? "right" : "left";
 
           var fruit = new fruitClass({
             x: x,
-            y: -fruitClass.prototype.defaults.height,
-            state: fruitClass.prototype.buildState("fall", mov2, dir),
-            yVelocity: -100
+            y: Backbone.HEIGHT,
+            state: fruitClass.prototype.buildState("fall", "rain", dir),
+            yVelocity: -1180*Backbone.RATIO
           });
 
           this.world.add(fruit);
@@ -130,18 +170,6 @@
       this._stateChangeDelay = undefined;
       this.world = options.world;
       this.listenTo(this.world, "change:state", this.onWorldChangeState);
-
-      this.heuristicNames = ["random", "rain", "sirup", "rain2"];
-      this.heuristicNames.index = 0;
-      this.heuristicNames.next = function() {
-        var index = this.index;
-        this.index += 1;
-        if (this.index >= this.length) this.index = 0;
-        return this[index];
-      }.bind(this.heuristicNames);
-      this.heuristicNames.reset = function() {
-        this.index = 0;
-      }.bind(this.heuristicNames);
     },
     onWorldChangeState: function() {
       var state = this.world.get("state");
@@ -157,7 +185,7 @@
       this.set({state: "idle"});
       this._throwDelay = undefined;
       this._stateChangeDelay = undefined;
-      this.heuristicNames.reset();
+      heuristicNames.reset();
     },
     throwFruit: function(options) {
       var state = this.get("state"),
@@ -169,8 +197,8 @@
 
       if (!options.skip) {
         var state = this.get("state"),
-            index = state == "idle" ? Math.floor((this.heuristicNames.length-0.01)*Math.random()) : null,
-            newState = index != null ? this.heuristicNames.next() : "idle";
+            index = state == "idle" ? Math.floor((heuristicNames.length-0.01)*Math.random()) : null,
+            newState = index != null ? heuristicNames.next() : "idle";
         console.log("HEURISTIC", newState);
         this.set({state: newState});
         this.throwFruit();

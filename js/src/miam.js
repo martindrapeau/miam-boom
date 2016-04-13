@@ -91,8 +91,10 @@
           height: this.getHeight(true)
         };
         var sprites = this.world.filterAt(b, undefined, "fruit");
-        for (var i = 0; i < sprites.length; i++)
-          sprites[i].trigger("hit", this, "top");
+        for (var i = 0; i < sprites.length; i++) {
+          if (sprites[i].get("yVelocity") > 0)
+            sprites[i].trigger("hit", this, "top");
+        }
 
       }
 
