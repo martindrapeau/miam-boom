@@ -31,7 +31,7 @@
       this.message.set({opacity: 0});
 
       // TODO: Funky animation
-      this.wait(500, function() {
+      this.wait(1000, function() {
         this.intro(function() {
           this.wait(500, function() {
             this.retract(36*Backbone.RATIO, 0, 18*Backbone.RATIO, function() {

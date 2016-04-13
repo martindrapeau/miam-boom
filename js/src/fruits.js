@@ -75,28 +75,11 @@
     }
   };
 
-  var hurtAnimation = {
-    sequences: sequences,
-    delay: 300,
-    yVelocity: fallVelocity,
-    yAcceleration: fallAcceleration
-  };
-  animations["idle-hurt-left"] = _.extend({}, animations["idle-left"], hurtAnimation);
-  animations["idle-hurt-right"] = _.extend({}, animations["idle-right"], hurtAnimation);
-  animations["walk-hurt-left"] = _.extend({}, animations["walk-left"], hurtAnimation);
-  animations["walk-hurt-right"] = _.extend({}, animations["walk-right"], hurtAnimation);
-  animations["fall-hurt-left"] = _.extend({}, animations["fall-left"], hurtAnimation);
-  animations["fall-hurt-right"] = _.extend({}, animations["fall-right"], hurtAnimation);
+  animations["fall-rain-left"] = _.extend({}, animations["fall-left"], {velocity: 0, yVelocity: fallVelocity*0.75});
+  animations["fall-rain-right"] = _.extend({}, animations["fall-right"], {velocity: 0, yVelocity: fallVelocity*0.75});
 
-  var attackAnimation = {
-    sequences: sequences
-  };
-  animations["idle-attack-left"] = _.extend({}, animations["idle-left"], attackAnimation);
-  animations["idle-attack-right"] = _.extend({}, animations["idle-right"], attackAnimation);
-  animations["walk-attack-left"] = _.extend({velocity: -attackVelocity}, animations["walk-left"], attackAnimation);
-  animations["walk-attack-right"] = _.extend({velocity: attackVelocity}, animations["walk-right"], attackAnimation);
-  animations["fall-attack-left"] = _.extend({velocity: -attackVelocity}, animations["fall-left"], attackAnimation);
-  animations["fall-attack-right"] = _.extend({velocity: attackVelocity}, animations["fall-right"], attackAnimation);
+  animations["fall-rain2-left"] = _.extend({}, animations["fall-left"], {velocity: -walkVelocity*0.25, yVelocity: fallVelocity*0.75});
+  animations["fall-rain2-right"] = _.extend({}, animations["fall-right"], {velocity: walkVelocity*0.25, yVelocity: fallVelocity*0.75});
 
   Backbone.Fruit = Backbone.Character.extend({
     defaults: _.extend({}, Backbone.Character.prototype.defaults, {
