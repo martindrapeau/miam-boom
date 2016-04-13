@@ -73,12 +73,6 @@ window.START = function() {
       Backbone.miamSpriteName || (Backbone.miamSpriteName = "miam");
 
 
-      // Fruit throwing AI
-      this.ai = new Backbone.Ai({}, {
-        world: this.world
-      });
-
-
       // GUI
       this.aboutLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
@@ -141,6 +135,13 @@ window.START = function() {
         width: Backbone.WIDTH,
         height: Backbone.HEIGHT,
         opacity: 0
+      });
+
+
+      // Fruit throwing AI
+      this.ai = new Backbone.Ai({}, {
+        world: this.world,
+        message: this.message
       });
 
 
@@ -214,11 +215,19 @@ window.START = function() {
     pause: function(options) {
       options || (options = {});
       this.world.set("state", "pause");
-      if (options.start)
+      if (options.start) {
         this.titleLabel.show();
-      else
+        this.listenTo(this.message, "change:state", function() {
+          if (this.message.get("state") == "ready") {
+            this.stopListening(this.message, "change:state");
+            this.listenTo(this.engine, "touchstart", this.start);
+          }
+        }.bind(this));
+      }
+      else {
         this.message.show(options);
-      this.listenTo(this.engine, "touchstart", this.start);
+        this.listenTo(this.engine, "touchstart", this.start);
+      }
     },
     start: function(options) {
       if (this.rotateLabel.get("opacity") == 1) return;

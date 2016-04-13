@@ -34,10 +34,8 @@
       this.wait(1000, function() {
         this.intro(function() {
           this.wait(500, function() {
-            this.retract(36*Backbone.RATIO, 0, 18*Backbone.RATIO, function() {
-              if (this.world.get("state") == "pause")
-                this.message.show(options);
-            });
+            this.retract(36*Backbone.RATIO, 0, 18*Backbone.RATIO);
+            if (this.world.get("state") == "pause") this.message.show(options);
           });
         });
       });

@@ -1,22 +1,12 @@
 (function() {
 
   var deadKeys = ["avoidTheBombs", "ouchStartHurts", "burntToACrisp", "burned", "whatAPredicament"],
-      readyKeys = ["touchToStart", "touchToTryAgain"],
+      readyKeys = ["touchToTryAgain"],
       failKeys = ["pleaseCatchTheFruit", "notEvenOne", "fail", "aBabyCouldDoBetter"],
       improveKeys = ["notBad", "niceWork", "gettingBetter", "greatJob", "wayToGo"],
       beatBestKeys = ["newBest", "awesome", "unbelievable", "youAreIncredible"],
       regressKeys = ["betterNextTime", "practiceMakesPerfect", "needsImprovement", "workInProcess", "canYouDoBetter"],
       below10Keys = ["tryToGetAbove10", "below10IsNotGreat", "notEven10"];
-
-  function nextSkipFirst() {
-    this.nextIndex || (this.nextIndex = 0);
-    if (this.nextIndex >= this.length) this.nextIndex = 1;
-    var result = this[this.nextIndex];
-    this.nextIndex += 1;
-    return result;
-  }
-  deadKeys.next = nextSkipFirst.bind(deadKeys);
-  readyKeys.next = nextSkipFirst.bind(readyKeys);
 
   function next() {
     this.nextIndex || (this.nextIndex = 0);
@@ -25,6 +15,8 @@
     this.nextIndex += 1;
     return result;
   }
+  deadKeys.next = next.bind(deadKeys);
+  readyKeys.next = next.bind(readyKeys);
   failKeys.next = next.bind(failKeys);
   improveKeys.next = next.bind(improveKeys);
   beatBestKeys.next = next.bind(beatBestKeys);
@@ -35,7 +27,7 @@
   Backbone.Message = Backbone.Label.extend({
     defaults: _.extend({}, Backbone.Label.prototype.defaults, {
       name: "message",
-      state: "ready",
+      state: "busy",
       easingTime: 250,
       text: window._lang.get("touchToStart"),
       textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes)
@@ -53,20 +45,21 @@
     show: function(options) {
       options || (options = {});
       this.set({
-        ready: false,
+        state: "busy",
         text: this.findBestLabel(options),
         opacity: 1
       });
       this.fadeIn(function() {
+        if (options.start || options.interlude) this.set({state: "ready"});
         if (!options.start)
           this.wait(1500, function() {
-            this.fadeOut(this.ready);
+            this.fadeOut(options.interlude ? undefined : this.ready);
           });
       });
     },
     ready: function() {
       this.set({
-        ready: true,
+        state: "ready",
         text: window._lang.get(readyKeys.next())
       });
       this.fadeIn();
@@ -81,10 +74,10 @@
           heroState = hero ? hero.get("state") : null;
 
       if (options.start) {
-        key = readyKeys.next();
+        key = "touchToStart";
       }
       else if (heroState == "dead") {
-        key = deadKeys.next();
+        key = readyKeys.next();
       }
       else {
         if (score > best) {
@@ -100,6 +93,9 @@
           key = below10Keys.next();
         }
         else if (score > this.bestScoreInSession) {
+          key = improveKeys.next();
+        }
+        else if (options.interlude) {
           key = improveKeys.next();
         }
         else {
