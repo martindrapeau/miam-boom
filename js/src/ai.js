@@ -86,7 +86,15 @@
       idle: function(options) {
         options || (options = {});
         this._throwDelay = undefined;
-        if (!options.start && this.world.get("fruits") > 0) this.message.show({interlude: true});
+        if (!options.start && this.world.get("fruits") > 0) {
+          var fruits = this.world.sprites.where({type: "fruit"});
+          if (fruits.length == 0) {
+            this.message.show({interlude: true});
+          } else {
+            this._throwTime = _.now();
+            this._throwDelay = 250;
+          }
+        }
       },
       random: function(options) {
         options || (options = {});
@@ -99,7 +107,7 @@
               dir = Math.random() < 0.5 ? "right" : "left",
               x =  dir == "right" ? -halfWidth : Backbone.WIDTH-halfWidth,
               y = Math.round(Backbone.HEIGHT*0.18*Math.random()),
-              yVelocity = Math.round(-500*Backbone.RATIO*Math.random());
+              yVelocity = Math.round(-200*Backbone.RATIO - 300*Backbone.RATIO*Math.random());
 
           var fruit = new fruitClass({
             x: x,
@@ -202,8 +210,8 @@
       // Private helpers
       _delayThrowRandom: function() {
         var fruits = this.world.get("fruits"),
-            startDelay = Math.max(150, 350 - fruits * 2),
-            deltaDelay = Math.max(500, 1500 - fruits * 20),
+            startDelay = Math.max(150, 350 - fruits),
+            deltaDelay = Math.max(500, 1500 - fruits * 10),
             delay = Math.floor(startDelay + deltaDelay*Math.random());
         this._throwTime = _.now();
         this._throwDelay = delay;
