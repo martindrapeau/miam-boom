@@ -156,7 +156,7 @@ window.START = function() {
         debugPanel: this.debugPanel
       });
 
-      this.engine.add([this.ai, this.world, this.scoreLabel, this.bestScoreLabel, this.titleLabel, this.aboutLabel, this.message, this.rotateScene, this.rotateLabel]);
+      this.engine.add([this.ai, this.world, this.rotateScene, this.rotateLabel]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
 
       this.listenTo(this.engine, "change:music", function() {
@@ -200,6 +200,7 @@ window.START = function() {
       });
       this.world.spawnSprites();
       this.world.getHero().debugPanel = this.debugPanel;
+      this.world.add([this.scoreLabel, this.bestScoreLabel, this.titleLabel, this.aboutLabel, this.message]);
 
       if (this.debugPanel) this.debugPanel.clear();
       this.engine.start();

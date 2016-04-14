@@ -59,7 +59,6 @@
         var state = this.get("state"),
             index = state == "idle" ? Math.floor((heuristicNames.length-0.01)*Math.random()) : null,
             newState = index != null ? heuristicNames.next() : "idle";
-        console.log("HEURISTIC", newState);
         this.set({state: newState});
         this.throwFruit();
       }

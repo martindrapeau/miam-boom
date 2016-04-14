@@ -3,7 +3,7 @@
   var deadKeys = ["avoidTheBombs", "ouchStartHurts", "burntToACrisp", "burned", "whatAPredicament"],
       readyKeys = ["touchToTryAgain"],
       failKeys = ["pleaseCatchTheFruit", "notEvenOne", "fail", "aBabyCouldDoBetter"],
-      improveKeys = ["notBad", "niceWork", "gettingBetter", "greatJob", "wayToGo"],
+      improveKeys = ["notBad", "niceWork", "gettingGood", "greatJob", "wayToGo", "youAreAChampion"],
       beatBestKeys = ["newBest", "awesome", "unbelievable", "youAreIncredible"],
       regressKeys = ["betterNextTime", "practiceMakesPerfect", "needsImprovement", "workInProcess", "canYouDoBetter"],
       below10Keys = ["tryToGetAbove10", "below10IsNotGreat", "notEven10"];
