@@ -929,10 +929,15 @@
       }
       return this;
     },
-    overlaps: Backbone.Sprite.prototype.overlaps,
     spawnImg: Backbone.SpriteSheet.prototype.spawnImg,
     destroyImg: Backbone.SpriteSheet.prototype.destroyImg
   });
+
+  var spriteMethods = ["overlaps", "getLeft", "getRight", "getTop", "getBottom", "getCenterX", "getCenterY"];
+  for (var i = 0; i < spriteMethods.length; i++) {
+    var method = spriteMethods[i];
+    Backbone.Element.prototype[method] = Backbone.Sprite.prototype[method];
+  }
 
   // Button class; an element when pressed animates a slight grow/shrink
   // and triggers a tap event

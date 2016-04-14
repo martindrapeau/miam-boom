@@ -68,12 +68,6 @@
     }
   });
 
-  var spriteMethods = ["getLeft", "getRight", "getTop", "getBottom", "getCenterX", "getCenterY"];
-  for (var i = 0; i < spriteMethods.length; i++) {
-    var method = spriteMethods[i];
-    Backbone.Label.prototype[method] = Backbone.Sprite.prototype[method];
-  }
-
   Backbone.ScoreLabel = Backbone.Label.extend({
     defaults: _.extend({}, Backbone.Label.prototype.defaults, {
       name: "score",
