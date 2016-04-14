@@ -132,7 +132,7 @@
       if (!animation || animation.sequences.length == 0) return;
       if (sequenceIndex >= animation.sequences.length) sequenceIndex = 0;
 
-      var sequence = animation.sequences[sequenceIndex]
+      var sequence = animation.sequences[sequenceIndex],
           frameIndex = _.isNumber(sequence) ? sequence : sequence.frame,
           frame = this.spriteSheet.frames[frameIndex],
           scaleX = animation.scaleX && animation.scaleX != 1 ? animation.scaleX : null,

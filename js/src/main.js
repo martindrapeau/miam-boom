@@ -176,7 +176,6 @@ window.START = function() {
       this.onResize();
       this.setup({skip:true});
       this.pause({start:true});
-      this.titleLabel.show({start:true});
     },
     setup: function(options) {
       this.engine.stop();
@@ -217,7 +216,7 @@ window.START = function() {
       options || (options = {});
       this.world.set("state", "pause");
       if (options.start) {
-        this.titleLabel.show();
+        this.titleLabel.show(options);
         this.listenTo(this.message, "change:state", function() {
           if (this.message.get("state") == "ready") {
             this.stopListening(this.message, "change:state");

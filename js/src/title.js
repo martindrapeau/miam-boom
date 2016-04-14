@@ -30,7 +30,6 @@
     show: function(options) {
       this.message.set({opacity: 0});
 
-      // TODO: Funky animation
       this.wait(1000, function() {
         this.intro(function() {
           this.wait(500, function() {
