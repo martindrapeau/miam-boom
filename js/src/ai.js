@@ -108,6 +108,20 @@
               y = Math.round(Backbone.HEIGHT*0.18*Math.random()),
               yVelocity = Math.round(-200*Backbone.RATIO - 300*Backbone.RATIO*Math.random());
 
+          // Switch sides if a fruit is too close
+          var b = {
+            x: x - fruitClass.prototype.defaults.width/2,
+            y: y + fruitClass.prototype.defaults.height/2,
+            width: fruitClass.prototype.defaults.width*2,
+            height: fruitClass.prototype.defaults.height*2
+          };
+          var closeByFruit = this.world.findAt(b, undefined, "fruit");
+          if (closeByFruit) {
+            console.log(closeByFruit);
+            dir = _.opo(dir);
+            x =  dir == "right" ? -halfWidth : Backbone.WIDTH-halfWidth
+          }
+
           var fruit = new fruitClass({
             x: x,
             y: y,

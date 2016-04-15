@@ -111,7 +111,7 @@
         text: bestScore > 0 ? window._lang.get("bestScore").replace("{0}", bestScore) : ""
       });
 
-      this.listenTo(this.world, "change:fruits", this.updateScore);
+      this.listenTo(this.world, "change:state", this.updateScore);
     },
     updateScore: function() {
       var state = this.world.get("state"),
