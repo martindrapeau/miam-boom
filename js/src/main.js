@@ -130,22 +130,6 @@ window.START = function() {
         world: this.world
       });
 
-      this.rotateLabel = new Backbone.Label({
-        x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
-        y: Backbone.Label.prototype.defaults.height,
-        text: window._lang.get("rotateYourScreen"),
-        opacity: 0
-      });
-      Backbone.adjustLabelSize(this.rotateLabel);
-
-      this.rotateScene = new Backbone.Scene({
-        x: 0,
-        y: 0,
-        width: Backbone.WIDTH,
-        height: Backbone.HEIGHT,
-        opacity: 0
-      });
-
 
       // Fruit throwing AI
       this.ai = new Backbone.Ai({}, {
@@ -165,7 +149,7 @@ window.START = function() {
         debugPanel: this.debugPanel
       });
 
-      this.engine.add([this.ai, this.world, this.miamButton, this.rotateScene, this.rotateLabel]);
+      this.engine.add([this.ai, this.world, this.miamButton]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
 
       this.listenTo(this.engine, "change:music", function() {
@@ -241,7 +225,6 @@ window.START = function() {
       }
     },
     onTouchToStart: function(e) {
-      if (this.rotateLabel.get("opacity") == 1) return;
       if (e && e.canvasY < this.message.get("y")) return;
       this.stopListening(this.engine, "touchstart", this.onTouchToStart);
       this.setup();
@@ -311,10 +294,6 @@ window.START = function() {
         this.message.set("y", Math.round(3*(Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height)/4));
         this.scoreLabel.set("y", Math.round(Backbone.HEIGHT*0.22));
         if (!this.titleLabel.isAnimated() && this.titleLabel.get("y") != 0) this.titleLabel.set("y", Math.round(Backbone.HEIGHT*0.22));
-
-        var rotate = Backbone.MOBILE && window.innerHeight < window.innerWidth;
-        this.rotateScene.set("opacity", rotate ? 0.8 : 0);
-        this.rotateLabel.set("opacity", rotate ? 1 : 0);
       }
     }
   });
