@@ -77,7 +77,7 @@ window.START = function() {
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
         y: 80,
         height: Backbone.Label.prototype.defaults.height/2,
-        text: screen.width+" "+screen.height,//window._lang.get("about"),
+        text: screen.width+" "+screen.height+" "+devicePixelRatio,//window._lang.get("about"),
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
           font: "16px arcade",
           fillStyle: "rgba(140, 140, 240, 1)"
