@@ -18,11 +18,6 @@ window.START = function() {
   console.log("canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
   console.log("window.innerWidth=" + window.innerWidth + " window.innerHeight=" + window.innerHeight);
 
-  // Adjust height
-  canvas.height = Backbone.MOBILE ? Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) ) : Math.min(window.innerHeight, canvas.width*1.775);
-  console.log("resize: canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
-  Backbone.HEIGHT = canvas.height;
-
 
   // Globals are saved in the Backbone namespace
   _.extend(Backbone, {
@@ -277,12 +272,18 @@ window.START = function() {
       }
     },
     onResize: function() {
+      // Adjust height
+      canvas.height = Backbone.MOBILE ? Math.round(canvas.width * Math.max(window.innerHeight, window.innerWidth) / Math.min(window.innerHeight, window.innerWidth) ) : Math.min(window.innerHeight, canvas.width*1.775);
+      console.log("resize: canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
+      Backbone.HEIGHT = canvas.height;
+
       if (this.world) {
+        var controller = this;
         this.world.set({height: Backbone.HEIGHT});
         this.world.sprites.each(function(sprite) {
           var name = sprite.get("name");
           switch(name) {
-            case this.miamButton.get("name"):
+            case controller.miamButton.get("miamSprite"):
               sprite.set({y: Math.round(Backbone.HEIGHT*0.86) - sprite.get("height")});
               break;
             case "floor":
@@ -290,6 +291,7 @@ window.START = function() {
               break;
           }
         });
+        this.world.requestBackgroundRedraw = true;
 
         this.aboutLabel.set("y", Backbone.HEIGHT - this.aboutLabel.get("height"));
         this.message.set("y", Math.round(3*(Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height)/4));
