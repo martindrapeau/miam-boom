@@ -1,7 +1,7 @@
 (function() {
 
 
-  var heuristicNames = ["random", "rain", "sirup", "random", "rainleft", "rainright", "up"];
+  var heuristicNames = ["random", "rain", "sirup", "random", "up"];
   heuristicNames.index = 0;
   heuristicNames.next = function() {
     var index = this.index;

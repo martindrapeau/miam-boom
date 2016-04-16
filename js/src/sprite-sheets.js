@@ -41,11 +41,21 @@
     tileColumns: 1,
     tileRows: 1
   }, {
-    id: "boom",
+    id: "cupcake",
     img: "#miam",
     imgUrl: "img/miam.png",
     x: 540,
     y: 180,
+    tileWidth: 90,
+    tileHeight: 90,
+    tileColumns: 1,
+    tileRows: 1
+  }, {
+    id: "boom",
+    img: "#miam",
+    imgUrl: "img/miam.png",
+    x: 540,
+    y: 540,
     tileWidth: 160,
     tileHeight: 90,
     tileColumns: 1,
