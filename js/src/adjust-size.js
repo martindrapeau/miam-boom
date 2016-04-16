@@ -9,13 +9,24 @@
     options || (options = {});
     options.ratio || (options.ratio = Backbone.RATIO);
 
-    var keys = ["width", "height", "paddingLeft", "paddingRight", "paddingTop", "paddingBottom", "textPadding", "imgWidth", "imgHeight"];
+    var keys = ["width", "height", "paddingLeft", "paddingRight", "paddingTop", "paddingBottom", "textPadding", "img", "imgUrl", "imgX", "imgY", "imgWidth", "imgHeight"];
     if (!cls.prototype._originalRatioValues) cls.prototype._originalRatioValues = _.pick(cls.prototype.defaults, keys);
 
     var attrs = _.clone(cls.prototype._originalRatioValues);
     for (var i = 0; i < keys.length; i++)
-      if (cls.prototype.defaults[keys[i]])
-        cls.prototype.defaults[keys[i]] *= options.ratio;
+      if (cls.prototype.defaults[keys[i]]) {
+        if (keys[i] == "img") {
+          if (options.ratio > 1)
+            cls.prototype.defaults[keys[i]] += options.ratio;
+        }
+        else if (keys[i] == "imgUrl") {
+          if (options.ratio > 1)
+            cls.prototype.defaults[keys[i]] = cls.prototype.defaults[keys[i]].replace(".png", options.ratio + ".png");
+        }
+        else {
+          cls.prototype.defaults[keys[i]] *= options.ratio;
+        }
+      }
     cls.prototype.defaults.ratio = options.ratio;
   };
 

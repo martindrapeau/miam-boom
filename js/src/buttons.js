@@ -24,6 +24,10 @@
       options || (options = {});
       this.world = options.world;
 
+      _.each(this.miams, function(o) {
+        o.imgX *= Backbone.RATIO;
+      });
+
       var def = this.getMiamDef(JSON.parse(Backbone.storage[Backbone.LSKEY_MIAM] || JSON.stringify(this.miams[0].name)));
       this.set({
         miamSprite: def.name,
