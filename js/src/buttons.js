@@ -1,0 +1,70 @@
+(function() {
+
+  Backbone.MiamButton = Backbone.Button.extend({
+    defaults: _.extend({}, Backbone.Button.prototype.defaults, {
+      name: "miam-button",
+      backgroundColor: "transparent",
+      width: 90,
+      height: 90,
+      img: "#miam", imgUrl: "img/miam.png",
+      imgX: 0, imgY: 540, imgWidth: 90, imgHeight: 90,
+      miamSprite: "miam",
+      easingTime: 250
+    }),
+    miams: [{
+      name: "miam",
+      imgX: 90
+    }, {
+      name: "miam2",
+      imgX: 0
+    }],
+    initialize: function(attributes, options) {
+      Backbone.Button.prototype.initialize.apply(this, arguments);
+
+      options || (options = {});
+      this.world = options.world;
+
+      var def = this.getMiamDef(JSON.parse(Backbone.storage[Backbone.LSKEY_MIAM] || JSON.stringify(this.miams[0].name)));
+      this.set({
+        miamSprite: def.name,
+        imgX: def.imgX
+      });
+
+      this.on('tap', this.onPressed);
+    },
+    getMiamDef: function(name) {
+      name || (name = this.get("miamSprite"));
+      var names = _.map(this.miams, function(o) {return o.name;}),
+          index = _.indexOf(names, name);
+      return this.miams[index];
+    },
+    getNextMiamDef: function(name) {
+      name || (name = this.get("miamSprite"));
+      var names = _.map(this.miams, function(o) {return o.name;}),
+          index = _.indexOf(names, name),
+          next = index + 1 >= names.length ? 0 : index + 1;
+      return this.miams[next];
+    },
+    onPressed: function(e) {
+      var def = this.getNextMiamDef();
+      this.set({
+        miamSprite: def.name,
+        imgX: def.imgX
+      });
+
+      var hero = this.world.getHero();
+      if (hero) {
+        var cls = _.classify(def.name);
+        this.world.add(new Backbone[cls]({
+          name: def.name,
+          x: hero.get("x"),
+          y: hero.get("y")
+        }));
+        this.world.remove(hero);
+      }
+
+      Backbone.storage[Backbone.LSKEY_MIAM] = JSON.stringify(def.name);
+    }
+  });
+
+}).call(this);

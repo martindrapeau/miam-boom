@@ -10,7 +10,7 @@
       width: 320,
       height: 128,
       paddingTop: 20,
-      backgroundColor: "#101044",
+      backgroundColor: "rgba(17, 63, 140, 1)",
       scale: 1
     }),
     draw: function(context, options) {

@@ -26,6 +26,7 @@
 
       options || (options = {});
       this.message = options.message;
+      this.bestScoreLabel = options.bestScoreLabel;
     },
     show: function(options) {
       this.message.set({opacity: 0});
@@ -34,7 +35,10 @@
         this.intro(function() {
           this.wait(500, function() {
             this.retract(36*Backbone.RATIO, 0, 18*Backbone.RATIO);
-            if (this.world.get("state") == "pause") this.message.show(options);
+            if (this.world.get("state") == "pause") {
+              this.message.show(options);
+              this.bestScoreLabel.show(options);
+            }
           });
         });
       });

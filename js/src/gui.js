@@ -68,6 +68,9 @@
     }
   });
 
+  Backbone.Button.prototype.show = Backbone.Label.prototype.show;
+  Backbone.Button.prototype.hide = Backbone.Label.prototype.hide;
+
   Backbone.ScoreLabel = Backbone.Label.extend({
     defaults: _.extend({}, Backbone.Label.prototype.defaults, {
       name: "score",
@@ -98,8 +101,7 @@
         text: "",
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
           font: "16px arcade",
-          textAlign: "right",
-          fillStyle: "#D0D0D0"
+          textAlign: "right"
         })
     }),
     initialize: function(attributes, options) {
@@ -127,7 +129,6 @@
       return this;
     }
   });
-
 
   Backbone.Panel = Backbone.Label.extend({
     defaults: _.extend({}, Backbone.Label.prototype.defaults, {

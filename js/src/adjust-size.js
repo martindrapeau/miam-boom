@@ -9,7 +9,7 @@
     options || (options = {});
     options.ratio || (options.ratio = Backbone.RATIO);
 
-    var keys = ["width", "height", "paddingLeft", "paddingRight", "paddingTop", "paddingBottom", "textPadding"];
+    var keys = ["width", "height", "paddingLeft", "paddingRight", "paddingTop", "paddingBottom", "textPadding", "imgWidth", "imgHeight"];
     if (!cls.prototype._originalRatioValues) cls.prototype._originalRatioValues = _.pick(cls.prototype.defaults, keys);
 
     var attrs = _.clone(cls.prototype._originalRatioValues);
@@ -50,7 +50,7 @@
 
   Backbone.adjustSizes = function() {
     var classes = _.union(
-      ["Miam", "Miam2", "Boom", "Fruit", "Floor", "Label", "TitleLabel", "ScoreLabel", "BestScoreLabel", "Message", "Scene", "Panel", "Splat"],
+      ["Miam", "Miam2", "Boom", "Fruit", "Floor", "Label", "TitleLabel", "ScoreLabel", "BestScoreLabel", "Message", "MiamButton", "Scene", "Panel", "Splat"],
       _.map(Backbone.fruitNames, function(fruitName) {return _.classify(fruitName); }),
       _.map(Backbone.fruitNames, function(fruitName) {return _.classify(Backbone[_.classify(fruitName)].prototype.defaults.explodeSprite); })
     );

@@ -31,6 +31,7 @@ window.START = function() {
     LSKEY_LANG: "miamboom_lang",
     LSKEY_DEVICE_LANG: "miamboom_device_lang",
     LSKEY_BEST_SCORE: "miamboom_best_score",
+    LSKEY_MIAM: "miamboom_miam",
     HEIGHT: canvas.height,
     WIDTH: canvas.width,
     OPEN_URL: window.openurl || undefined,
@@ -64,13 +65,11 @@ window.START = function() {
 
       // Our world
       this.world = new Backbone.World({
-        state: "pause"
+        state: "pause",
+        backgroundColor: "rgba(0, 161, 203, 1)",
       });
       this.world.sprites.on("remove", this.onWorldSpriteRemoved, this);
       this.world.sprites.on("landed", this.onWorldSpriteLanded, this);
-
-      // Our hero
-      Backbone.miamSpriteName || (Backbone.miamSpriteName = "miam");
 
 
       // GUI
@@ -81,7 +80,7 @@ window.START = function() {
         text: window._lang.get("about"),
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
           font: "16px arcade",
-          fillStyle: "#606099"
+          fillStyle: "rgba(140, 140, 240, 1)"
         })
       });
       Backbone.adjustLabelSize(this.aboutLabel);
@@ -96,7 +95,8 @@ window.START = function() {
 
       this.bestScoreLabel = new Backbone.BestScoreLabel({
         x: Backbone.WIDTH - 10 - Backbone.BestScoreLabel.prototype.defaults.width,
-        y: 0
+        y: 0,
+        opacity: 0
       }, {
         world: this.world
       });
@@ -117,9 +117,18 @@ window.START = function() {
         y: Math.round(Backbone.HEIGHT*0.22),
       }, {
         world: this.world,
-        message: this.message
+        message: this.message,
+        bestScoreLabel: this.bestScoreLabel
       });
       Backbone.adjustLabelSize(this.titleLabel);
+
+      this.miamButton = new Backbone.MiamButton({
+        x: Backbone.WIDTH*0.10,
+        y: Backbone.HEIGHT*0.08,
+        opacity: 0
+      }, {
+        world: this.world
+      });
 
       this.rotateLabel = new Backbone.Label({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
@@ -156,7 +165,7 @@ window.START = function() {
         debugPanel: this.debugPanel
       });
 
-      this.engine.add([this.ai, this.world, this.rotateScene, this.rotateLabel]);
+      this.engine.add([this.ai, this.world, this.miamButton, this.rotateScene, this.rotateLabel]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
 
       this.listenTo(this.engine, "change:music", function() {
@@ -182,7 +191,6 @@ window.START = function() {
       this.world.set("state", "pause");
 
       this.world.set({
-        backgroundColor: "#101066",
         width: Backbone.WIDTH,
         height: Backbone.HEIGHT,
         sprites: [{
@@ -190,7 +198,7 @@ window.START = function() {
           x: 0,
           y: Backbone.HEIGHT - Backbone.Floor.prototype.defaults.height
         }, {
-          name: Backbone.miamSpriteName,
+          name: this.miamButton.get("miamSprite"),
           x: Backbone.WIDTH/2 - Backbone.Miam.prototype.defaults.width/2,
           y: Math.round(Backbone.HEIGHT*0.86) - Backbone.Miam.prototype.defaults.height
         }],
@@ -216,24 +224,29 @@ window.START = function() {
       options || (options = {});
       this.world.set("state", "pause");
       if (options.start) {
+        this.miamButton.hide();
         this.titleLabel.show(options);
         this.listenTo(this.message, "change:state", function() {
           if (this.message.get("state") == "ready") {
+            this.miamButton.show();
             this.stopListening(this.message, "change:state");
-            this.listenTo(this.engine, "touchstart", this.start);
+            this.listenTo(this.engine, "touchstart", this.onTouchToStart);
           }
         }.bind(this));
       }
       else {
         this.message.show(options);
-        this.listenTo(this.engine, "touchstart", this.start);
+        this.miamButton.show();
+        this.listenTo(this.engine, "touchstart", this.onTouchToStart);
       }
     },
-    start: function(options) {
+    onTouchToStart: function(e) {
       if (this.rotateLabel.get("opacity") == 1) return;
-      this.stopListening(this.engine, "touchstart", this.start);
-      this.setup(options);
+      if (e && e.canvasY < this.message.get("y")) return;
+      this.stopListening(this.engine, "touchstart", this.onTouchToStart);
+      this.setup();
       this.message.hide();
+      this.miamButton.fadeOut();
     },
     onWorldSpriteRemoved: function(sprite, world, options) {
       var name = sprite.get("name"),
@@ -285,7 +298,7 @@ window.START = function() {
         this.world.sprites.each(function(sprite) {
           var name = sprite.get("name");
           switch(name) {
-            case Backbone.miamSpriteName:
+            case this.miamButton.get("name"):
               sprite.set({y: Math.round(Backbone.HEIGHT*0.86) - sprite.get("height")});
               break;
             case "floor":
