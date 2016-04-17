@@ -21,6 +21,16 @@
     tileColumns: 4,
     tileRows: 1
   }, {
+    id: "garfield",
+    img: "#miam",
+    imgUrl: "img/miam.png",
+    x: 0,
+    y: 720,
+    tileWidth: 180,
+    tileHeight: 180,
+    tileColumns: 4,
+    tileRows: 1
+  }, {
     id: "fruits",
     img: "#miam",
     imgUrl: "img/miam.png",

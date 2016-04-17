@@ -16,6 +16,9 @@
       imgX: 70
     }, {
       name: "miam2",
+      imgX: 140
+    }, {
+      name: "garfield",
       imgX: 0
     }],
     initialize: function(attributes, options) {

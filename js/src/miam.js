@@ -113,4 +113,12 @@
     })
   });
 
+  Backbone.Garfield = Backbone.Miam.extend({
+    defaults: _.extend({}, Backbone.Miam.prototype.defaults, {
+      spriteSheet: "garfield",
+      paddingTop: 45,
+      paddingBottom: 130,
+    })
+  });
+
 }).call(this);
