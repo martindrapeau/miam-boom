@@ -102,6 +102,8 @@
       alwaysUpdate: true,
       ceiling: -100
     }),
+    fallAcceleration: fallAcceleration,
+    fallVelocity: fallVelocity,
     animations: animations,
     initialize: function() {
       Backbone.Character.prototype.initialize.apply(this, arguments);
@@ -137,7 +139,21 @@
         x: this.get("x") + this.get("width")/2 - Backbone[cls].prototype.defaults.width/2,
         y: this.get("y")
       }));
-    }
+    }/*,
+    onUpdate: function(dt) {
+      if (!this._logged1) {
+        this._logged1 = true;
+        var now = _.now();
+        console.log(this.id, this.get("x"), this.get("velocity"), now);
+        console.log(this.id, this.get("y"), this.get("yVelocity"), fallAcceleration, now);
+      } else if (!this._logged2 && this.get("y") > this.world.getHero().get("y")) {
+        this._logged2 = true;
+        var now = _.now();
+        console.log(this.id, this.get("x"), this.get("velocity"), now);
+        console.log(this.id, this.get("y"), this.get("yVelocity"), fallAcceleration, now);
+      }
+      return true;
+    }*/
   });
 
   function createFruit(name, sequences) {

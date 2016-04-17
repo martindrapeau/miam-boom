@@ -99,15 +99,81 @@
         options || (options = {});
 
         if (!options.skip) {
-          var index = Math.floor((Backbone.fruitNames.length-0.01)*Math.random()),
+          var hero = this.world.getHero(),
+              index = Math.floor((Backbone.fruitNames.length-0.01)*Math.random()),
               fruitName = Backbone.fruitNames[index],
               fruitClass = Backbone[_.classify(fruitName)],
               halfWidth = fruitClass.prototype.defaults.width/2,
-              dir = Math.random() < 0.5 ? "right" : "left",
-              x =  dir == "right" ? -halfWidth : Backbone.WIDTH-halfWidth,
-              y = Math.round(Backbone.HEIGHT*0.18*Math.random()),
-              yVelocity = Math.round(-200*Backbone.RATIO - 300*Backbone.RATIO*Math.random());
+              dir, x, y, state, yVelocity, d, t, proj,
+              yFinalVelocity = Backbone.Fruit.prototype.fallVelocity,
+              yAcceleration = Backbone.Fruit.prototype.fallAcceleration;
 
+          // Randomly select values...
+          function randomCalc() {
+            dir = Math.random() < 0.5 ? "right" : "left";
+            x =  dir == "right" ? -halfWidth : Backbone.WIDTH-halfWidth;
+            y = Math.round(Backbone.HEIGHT*0.18*Math.random());
+            state = fruitClass.prototype.buildState("fall", dir);
+            yVelocity = Math.round(-200*Backbone.RATIO - 300*Backbone.RATIO*Math.random());
+            d = hero.getTop(true) - y;
+            // How much time before at Miam's mouth?
+            t = (yFinalVelocity - yVelocity)/yAcceleration,
+                d1 = yVelocity*t + 0.5*yAcceleration*t*t;
+            if (d1 <= d) {
+              t += (d-d1)/yFinalVelocity;
+            } else {
+              t = (-yVelocity + Math.sqrt(yVelocity*yVelocity + 2*yAcceleration*d))/yAcceleration;
+            }
+          }
+          randomCalc();
+
+          // Project to when it will be eaten...
+          function projectBbox(x0, y0, velocity, yVelocity, t) {
+            var t1 = Math.min(t, (yFinalVelocity - yVelocity)/yAcceleration),
+                y = y0 + yVelocity*t1 + 0.5*yAcceleration*t1*t1;
+            if (t1 < t) y += yFinalVelocity*(t-t1);
+            return {
+              x0: x0,
+              y0: y0,
+              x: x0 + velocity*t,
+              y: y,
+              width: fruitClass.prototype.defaults.width*2,
+              height: fruitClass.prototype.defaults.height*2,
+              t: t,
+              velocity: velocity
+            };
+          }
+          function buildProj() {
+            proj = projectBbox(x, y, Backbone.Fruit.prototype.getAnimation(state).velocity, yVelocity, t);
+          }
+          buildProj();
+
+          // And compare to projections of existing fruits or bombs.
+          // If too close, randomize again. Up to 10 tries to find a far-enough position.
+          var projections = [];
+          this.world.sprites.each(function(sprite) {
+            if (sprite.get("type") != "fruit") return true;
+            if (fruitName == "bomb" && sprite.get("name") != "bomb" ||
+                fruitName != "bomb" && sprite.get("name") == "bomb") {
+              projections.push(projectBbox(sprite.get("x"), sprite.get("y"), Backbone.Fruit.prototype.getAnimation(sprite.get("state")).velocity, sprite.get("yVelocity"), t));
+            }
+          });
+          for (var i = 0; i < 10; i++) {
+            var brk = true;
+            for (var p = 0; p < projections.length; p++) {
+              var targ = projections[p];
+              if (proj.x < targ.x+targ.width && proj.x+proj.width > targ.x &&
+                  proj.y < targ.y+targ.height && proj.y+proj.height > targ.y) {
+                randomCalc();
+                buildProj();
+                brk = false;
+                break;
+              }
+            }
+            if (brk) break;
+          }
+
+          /*
           // Switch sides if a fruit is too close
           var b = {
             x: x - fruitClass.prototype.defaults.width/2,
@@ -121,11 +187,12 @@
             dir = _.opo(dir);
             x =  dir == "right" ? -halfWidth : Backbone.WIDTH-halfWidth
           }
+          */
 
           var fruit = new fruitClass({
             x: x,
             y: y,
-            state: fruitClass.prototype.buildState("fall", dir),
+            state: state,
             yVelocity: yVelocity
           });
 
