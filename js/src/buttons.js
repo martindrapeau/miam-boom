@@ -4,16 +4,16 @@
     defaults: _.extend({}, Backbone.Button.prototype.defaults, {
       name: "miam-button",
       backgroundColor: "transparent",
-      width: 90,
-      height: 90,
+      width: 70,
+      height: 70,
       img: "#miam", imgUrl: "img/miam.png",
-      imgX: 0, imgY: 540, imgWidth: 90, imgHeight: 90,
+      imgX: 0, imgY: 540, imgWidth: 70, imgHeight: 70,
       miamSprite: "miam",
       easingTime: 250
     }),
     miams: [{
       name: "miam",
-      imgX: 90
+      imgX: 70
     }, {
       name: "miam2",
       imgX: 0

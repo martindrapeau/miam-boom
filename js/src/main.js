@@ -12,7 +12,8 @@ window.START = function() {
       context = canvas.getContext("2d");
 
   // Default width is 320, as used on desktop. On mobile use 640.
-  var ratio = MOBILE || window.innerHeight >= 960 ? 2 : 1;
+  var ratio = MOBILE || window.innerHeight >= 960 ? 2 : 1,
+      aspectRatio = Math.max(window.screen.width, window.screen.height) / Math.min(window.screen.width, window.screen.height);
   canvas.width = 320 * ratio;
   canvas.height = ratio * 568;
   console.log("canvas.width=" + canvas.width + " canvas.height=" + canvas.height);
@@ -77,7 +78,7 @@ window.START = function() {
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
         y: 80,
         height: Backbone.Label.prototype.defaults.height/2,
-        text: screen.width+" "+screen.height+" "+devicePixelRatio,//window._lang.get("about"),
+        text: window._lang.get("about"),
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
           font: "16px arcade",
           fillStyle: "rgba(140, 140, 240, 1)"
