@@ -16,7 +16,7 @@
       imgX: 70
     }, {
       name: "miam2",
-      imgX: 140
+      imgX: 210
     }, {
       name: "garfield",
       imgX: 0
