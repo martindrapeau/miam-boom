@@ -88,7 +88,7 @@ window.START = function() {
 
       this.scoreLabel = new Backbone.ScoreLabel({
         x: Backbone.WIDTH/2 - Backbone.ScoreLabel.prototype.defaults.width/2,
-        y: Math.round(Backbone.HEIGHT*0.22)
+        y: Math.round(Backbone.HEIGHT*0.25)
       }, {
         world: this.world
       });
@@ -115,7 +115,7 @@ window.START = function() {
 
       this.titleLabel = new Backbone.TitleLabel({
         x: Backbone.WIDTH/2 - Backbone.Label.prototype.defaults.width/2,
-        y: Math.round(Backbone.HEIGHT*0.22),
+        y: Math.round(Backbone.HEIGHT*0.25),
       }, {
         world: this.world,
         message: this.message,
@@ -320,7 +320,7 @@ window.START = function() {
 
         this.aboutLabel.set("y", Backbone.HEIGHT - this.aboutLabel.get("height"));
         this.message.set("y", Math.round(3*(Backbone.HEIGHT - 100 - Backbone.Miam.prototype.defaults.height)/4));
-        this.scoreLabel.set("y", Math.round(Backbone.HEIGHT*0.22));
+        this.scoreLabel.set("y", Math.round(Backbone.HEIGHT*0.25));
         if (!this.titleLabel.isAnimated() && this.titleLabel.get("y") != 0) this.titleLabel.set("y", Math.round(Backbone.HEIGHT*0.22));
       }
     }
