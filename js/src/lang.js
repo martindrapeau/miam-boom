@@ -89,7 +89,8 @@
       success: "Success!",
       pleaseWait: "Please wait...",
       error: "Error",
-      errorWithMessage: "Error: {0}"
+      errorWithMessage: "Error: {0}",
+      notYetImplemented: "Not yet implemented"
     }
   };
   

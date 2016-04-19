@@ -131,6 +131,22 @@ window.START = function() {
         world: this.world
       });
 
+      this.configButton = new Backbone.ConfigButton({
+        x: Backbone.WIDTH*0.90 - Backbone.ShareButton.prototype.defaults.width,
+        y: Backbone.HEIGHT*0.08,
+        opacity: 0
+      }, {
+        world: this.world
+      });
+
+      this.shareButton = new Backbone.ShareButton({
+        x: Backbone.WIDTH*0.50 - Backbone.ConfigButton.prototype.defaults.width/2,
+        y: Backbone.HEIGHT*0.08,
+        opacity: 0
+      }, {
+        world: this.world
+      });
+
 
       // Fruit throwing AI
       this.ai = new Backbone.Ai({}, {
@@ -150,7 +166,7 @@ window.START = function() {
         debugPanel: this.debugPanel
       });
 
-      this.engine.add([this.ai, this.world, this.miamButton]);
+      this.engine.add([this.ai, this.world, this.miamButton, this.shareButton, this.configButton]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
 
       this.listenTo(this.engine, "change:music", function() {
@@ -210,10 +226,14 @@ window.START = function() {
       this.world.set("state", "pause");
       if (options.start) {
         this.miamButton.hide();
+        this.shareButton.hide();
+        this.configButton.hide();
         this.titleLabel.show(options);
         this.listenTo(this.message, "change:state", function() {
           if (this.message.get("state") == "ready") {
             this.miamButton.show();
+            this.shareButton.show();
+            this.configButton.show();
             this.stopListening(this.message, "change:state");
             this.listenTo(this.engine, "touchstart", this.onTouchToStart);
           }
@@ -222,6 +242,8 @@ window.START = function() {
       else {
         this.message.show(options);
         this.miamButton.show();
+        this.shareButton.show();
+        this.configButton.show();
         this.listenTo(this.engine, "touchstart", this.onTouchToStart);
       }
     },
@@ -230,7 +252,9 @@ window.START = function() {
       this.stopListening(this.engine, "touchstart", this.onTouchToStart);
       this.setup();
       this.message.hide();
-      this.miamButton.fadeOut();
+      this.miamButton.hide();
+      this.shareButton.hide();
+      this.configButton.hide();
     },
     onWorldSpriteRemoved: function(sprite, world, options) {
       var name = sprite.get("name"),
