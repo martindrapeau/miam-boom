@@ -5,7 +5,6 @@
       name: "miam",
       type: "miam",
       hero: true,
-      spriteSheet: "miam",
       state: "idle",
       x: 0,
       y: 0,
@@ -105,11 +104,17 @@
     }
   });
 
-  Backbone.Miam2 = Backbone.Miam.extend({
+  Backbone.Furry = Backbone.Miam.extend({
     defaults: _.extend({}, Backbone.Miam.prototype.defaults, {
-      spriteSheet: "miam2",
+      spriteSheet: "furry"
+    })
+  });
+
+  Backbone.Pinky = Backbone.Miam.extend({
+    defaults: _.extend({}, Backbone.Miam.prototype.defaults, {
+      spriteSheet: "pinky",
       paddingTop: 45,
-      paddingBottom: 130,
+      paddingBottom: 130
     })
   });
 
@@ -117,7 +122,7 @@
     defaults: _.extend({}, Backbone.Miam.prototype.defaults, {
       spriteSheet: "garfield",
       paddingTop: 45,
-      paddingBottom: 130,
+      paddingBottom: 130
     })
   });
 

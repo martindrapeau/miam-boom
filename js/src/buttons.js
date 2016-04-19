@@ -6,12 +6,12 @@
       backgroundColor: "transparent",
       width: 70,
       height: 70,
-      img: "#miam", imgUrl: "img/miam.png",
-      imgX: 0, imgY: 540, imgWidth: 70, imgHeight: 70,
+      img: "#artifacts", imgUrl: "img/artifacts.png",
+      imgX: 0, imgY: 180, imgWidth: 70, imgHeight: 70,
       miamSprite: "miam",
       easingTime: 250
     }),
-    miams: ["miam", "miam2", "garfield"],
+    miams: ["furry", "pinky", "garfield"],
     initialize: function(attributes, options) {
       Backbone.Button.prototype.initialize.apply(this, arguments);
 
@@ -50,8 +50,8 @@
       backgroundColor: "transparent",
       width: 70,
       height: 70,
-      img: "#miam", imgUrl: "img/miam.png",
-      imgX: 70, imgY: 540, imgWidth: 70, imgHeight: 70,
+      img: "#artifacts", imgUrl: "img/artifacts.png",
+      imgX: 70, imgY: 180, imgWidth: 70, imgHeight: 70,
       easingTime: 250
     }),
     initialize: function(attributes, options) {
@@ -73,8 +73,8 @@
       backgroundColor: "transparent",
       width: 70,
       height: 70,
-      img: "#miam", imgUrl: "img/miam.png",
-      imgX: 140, imgY: 540, imgWidth: 70, imgHeight: 70,
+      img: "#artifacts", imgUrl: "img/artifacts.png",
+      imgX: 140, imgY: 180, imgWidth: 70, imgHeight: 70,
       easingTime: 250
     }),
     initialize: function(attributes, options) {

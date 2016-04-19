@@ -1,9 +1,8 @@
 (function() {
   
 	Backbone.spriteSheetDefinitions = [{
-    id: "miam",
-    img: "#miam",
-    imgUrl: "img/miam.png",
+    id: "furry",
+    img: "#furry", imgUrl: "img/furry.png",
     x: 0,
     y: 0,
     tileWidth: 180,
@@ -11,71 +10,64 @@
     tileColumns: 4,
     tileRows: 1
   }, {
-    id: "miam2",
-    img: "#miam",
-    imgUrl: "img/miam.png",
+    id: "pinky",
+    img: "#pinky", imgUrl: "img/pinky.png",
     x: 0,
-    y: 360,
+    y: 0,
     tileWidth: 180,
     tileHeight: 180,
     tileColumns: 4,
     tileRows: 1
   }, {
     id: "garfield",
-    img: "#miam",
-    imgUrl: "img/miam.png",
+    img: "#garfield", imgUrl: "img/garfield.png",
     x: 0,
-    y: 720,
+    y: 0,
     tileWidth: 180,
     tileHeight: 180,
     tileColumns: 4,
     tileRows: 1
   }, {
     id: "fruits",
-    img: "#miam",
-    imgUrl: "img/miam.png",
+    img: "#artifacts", imgUrl: "img/artifacts.png",
     x: 0,
-    y: 270,
+    y: 90,
     tileWidth: 90,
     tileHeight: 90,
     tileColumns: 8,
     tileRows: 1
   }, {
     id: "bomb",
-    img: "#miam",
-    imgUrl: "img/miam.png",
+    img: "#artifacts", imgUrl: "img/artifacts.png",
     x: 450,
-    y: 180,
+    y: 0,
     tileWidth: 90,
     tileHeight: 90,
     tileColumns: 1,
     tileRows: 1
   }, {
     id: "cupcake",
-    img: "#miam",
-    imgUrl: "img/miam.png",
+    img: "#artifacts", imgUrl: "img/artifacts.png",
     x: 540,
-    y: 180,
+    y: 0,
     tileWidth: 90,
     tileHeight: 90,
     tileColumns: 1,
     tileRows: 1
   }, {
     id: "boom",
-    img: "#miam",
-    imgUrl: "img/miam.png",
+    img: "#artifacts", imgUrl: "img/artifacts.png",
     x: 540,
-    y: 540,
+    y: 180,
     tileWidth: 160,
     tileHeight: 90,
     tileColumns: 1,
     tileRows: 1
   }, {
     id: "splat",
-    img: "#miam",
-    imgUrl: "img/miam.png",
+    img: "#artifacts", imgUrl: "img/artifacts.png",
     x: 0,
-    y: 180,
+    y: 0,
     tileWidth: 90,
     tileHeight: 90,
     tileColumns: 5,

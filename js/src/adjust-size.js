@@ -61,7 +61,14 @@
 
   Backbone.adjustSizes = function() {
     var classes = _.union(
-      ["Miam", "Miam2", "Garfield", "Boom", "Fruit", "Floor", "Label", "TitleLabel", "ScoreLabel", "BestScoreLabel", "Message", "MiamButton", "ShareButton", "ConfigButton", "Scene", "Panel", "Splat"],
+      [
+        "Miam", "Furry", "Pinky", "Garfield",
+        "Boom", "Fruit", "Splat", 
+        "Floor",
+        "Label", "TitleLabel", "ScoreLabel", "BestScoreLabel", "Message",
+        "MiamButton", "ShareButton", "ConfigButton",
+        "Scene", "Panel"
+      ],
       _.map(Backbone.fruitNames, function(fruitName) {return _.classify(fruitName); }),
       _.map(Backbone.fruitNames, function(fruitName) {return _.classify(Backbone[_.classify(fruitName)].prototype.defaults.explodeSprite); })
     );
