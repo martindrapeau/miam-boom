@@ -123,16 +123,8 @@ window.START = function() {
       });
       Backbone.adjustLabelSize(this.titleLabel);
 
-      this.panel = new Backbone.Panel({
-        x: Backbone.WIDTH*0.5 - Backbone.Panel.prototype.defaults.width*0.5,
-        y: Backbone.HEIGHT*0.5 - Backbone.Panel.prototype.defaults.height*0.5,
-        opacity: 0
-      }, {
-        world: this.world
-      });
-
       this.miamButton = new Backbone.MiamButton({
-        x: Backbone.WIDTH*0.10,
+        x: Backbone.WIDTH*0.1,
         y: Backbone.HEIGHT*0.08,
         opacity: 0
       }, {
@@ -140,7 +132,7 @@ window.START = function() {
       });
 
       this.configButton = new Backbone.ConfigButton({
-        x: Backbone.WIDTH*0.90 - Backbone.ConfigButton.prototype.defaults.width,
+        x: Backbone.WIDTH*0.9 - Backbone.ConfigButton.prototype.defaults.width,
         y: Backbone.HEIGHT*0.08,
         opacity: 0
       }, {
@@ -148,12 +140,28 @@ window.START = function() {
       });
 
       this.shareButton = new Backbone.ShareButton({
-        x: Backbone.WIDTH*0.50 - Backbone.ShareButton.prototype.defaults.width/2,
+        x: Backbone.WIDTH*0.5 - Backbone.ShareButton.prototype.defaults.width*0.5,
         y: Backbone.HEIGHT*0.08,
         opacity: 0
       }, {
+        world: this.world
+      });
+
+      this.panel = new Backbone.Panel({
+        x: Backbone.WIDTH*0.5 - Backbone.Panel.prototype.defaults.width*0.5,
+        y: Backbone.HEIGHT*0.10,
+        opacity: 0
+      }, {
         world: this.world,
-        panel: this.panel
+        bestScoreLabel: this.bestScoreLabel
+      });
+
+      this.configPanel = new Backbone.ConfigPanel({
+        x: Backbone.WIDTH*0.5 - Backbone.ConfigPanel.prototype.defaults.width*0.5,
+        y: Backbone.HEIGHT*0.10,
+        opacity: 0
+      }, {
+        world: this.world
       });
 
 
@@ -175,7 +183,7 @@ window.START = function() {
         debugPanel: this.debugPanel
       });
 
-      this.engine.add([this.ai, this.world, this.miamButton, this.configButton, this.panel, this.shareButton]);
+      this.engine.add([this.ai, this.world, this.miamButton, this.shareButton, this.configButton, this.panel, this.configPanel]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
 
       this.listenTo(this.engine, "change:music", function() {
@@ -188,6 +196,33 @@ window.START = function() {
       this.soundEffects.each(function(audio) {
         audio.engine = engine;
         audio.trigger("attach");
+      });
+
+
+      // Game events
+      this.listenTo(this.engine, "show-panel", function() {
+        this.miamButton.hide();
+        this.shareButton.hide();
+        this.configButton.hide();
+        this.panel.show();
+      });
+      this.listenTo(this.engine, "hide-panel", function() {
+        this.panel.hide();
+        this.miamButton.show();
+        this.shareButton.show();
+        this.configButton.show();
+      });
+      this.listenTo(this.engine, "show-config-panel", function() {
+        this.miamButton.hide();
+        this.shareButton.hide();
+        this.configButton.hide();
+        this.configPanel.show();
+      });
+      this.listenTo(this.engine, "hide-config-panel", function() {
+        this.configPanel.hide();
+        this.miamButton.show();
+        this.shareButton.show();
+        this.configButton.show();
       });
 
 
@@ -256,16 +291,19 @@ window.START = function() {
       }.bind(this));
     },
     onTouchToStart: function(e) {
-      if (e && e.canvasY < this.message.get("y")) return;
       if (this.panel.get("opacity") && e) {
-        if (e.canvasY > this.panel.getBottom()) this.panel.hide();
+        if (!this.panel.overlaps({x: e.canvasX, y: e.canvasY})) this.engine.trigger("hide-panel");
         return;
       }
+      if (this.configPanel.get("opacity") && e) {
+        if (!this.configPanel.overlaps({x: e.canvasX, y: e.canvasY})) this.engine.trigger("hide-config-panel");
+        return;
+      }
+      if (e && e.canvasY < this.message.get("y")) return;
       this.stopListening(this.engine, "touchstart", this.onTouchToStart);
       this.setup();
       this.message.hide();
       this.miamButton.hide();
-      this.panel.hide();
       this.shareButton.hide();
       this.configButton.hide();
     },

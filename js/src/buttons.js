@@ -64,15 +64,11 @@
 
       options || (options = {});
       this.world = options.world;
-      this.panel = options.panel;
 
       this.on('tap', this.onPressed);
     },
     onPressed: function(e) {
-      if (this.panel.get("opacity"))
-        this.panel.hide();
-      else
-        this.panel.show();
+      this.engine.trigger("show-panel");
     }
   });
 
@@ -95,7 +91,7 @@
       this.on('tap', this.onPressed);
     },
     onPressed: function(e) {
-      alert(window._lang.get("notYetImplemented"));
+      this.engine.trigger("show-config-panel");
     }
   });
 

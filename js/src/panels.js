@@ -3,7 +3,7 @@
 
   Backbone.BigShareButton = Backbone.Button.extend({
     defaults: _.extend({}, Backbone.Button.prototype.defaults, {
-      name: "share-button",
+      name: "big-share-button",
       backgroundColor: "transparent",
       width: 180,
       height: 65,
@@ -30,23 +30,45 @@
       opacity: 1.0,
       text: "",
       easing: "easeInCubic",
-      easingTime: 250,
-      fruits: 0,
-      miam: "furry"
+      easingTime: 250
     }),
+    initialize: function(attributes, options) {
+      Backbone.Label.prototype.initialize.apply(this, arguments);
+
+      options || (options = {});
+      this.bestScoreLabel = options.bestScoreLabel;
+
+      this.shareButton = new Backbone.BigShareButton({
+        x: Backbone.WIDTH*0.5 - Backbone.BigShareButton.prototype.defaults.width*0.5,
+        y: this.getBottom() - Backbone.BigShareButton.prototype.defaults.height*1.4,
+        opacity: this.get("opacity")
+      });
+    },
+    onAttach: function() {
+      Backbone.Label.prototype.onAttach.apply(this, arguments);
+      this.engine.add(this.shareButton);
+    },
+    onDetach: function() {
+      Backbone.Label.prototype.onDetach.apply(this, arguments);
+      this.engine.remove(this.shareButton);
+    },
+    onUpdate: function(dt) {
+      this.shareButton.set({opacity: this.get("opacity")});
+      return true;
+    },
     onDraw: function(context, options) {
-      var hero = this.world.getHero(),
+      var hero = new Backbone[_.classify(this.bestScoreLabel.get("miamSprite"))],
           b = this.toJSON(),
           x = b.x,
           y = b.y,
-          fruits = this.world.get("fruits");
+          fruits = this.bestScoreLabel.get("fruits");
       
       // Miam
       var frame = hero.spriteSheet.frames[fruits ? 0 : 3];
       context.drawImage(
         hero.spriteSheet.img,
         frame.x, frame.y, frame.width, frame.height,
-        x + b.width*0.05, y + b.height*0.10, frame.width*0.65, frame.height*0.65
+        x + b.width*0.05, y + b.height*0.10, frame.width*0.60, frame.height*0.60
       );
 
       // Titles
@@ -63,7 +85,7 @@
 
       b.textContextAttributes.font = Math.floor(frame.height*0.3) + "px arcade";
       b.text = fruits;
-      b.y += Math.floor(frame.height*0.15);
+      b.y += Math.floor(frame.height*0.16);
       this.drawText(b, context, options);
 
       b.textContextAttributes.font = Math.floor(frame.height*0.15) + "px arcade";
@@ -73,6 +95,10 @@
 
       return this;
     }
+  });
+
+  Backbone.ConfigPanel = Backbone.Label.extend({
+    defaults: _.extend({}, Backbone.Panel.prototype.defaults)
   });
 
 }).call(this);

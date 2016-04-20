@@ -98,6 +98,8 @@
     defaults: _.extend({}, Backbone.Label.prototype.defaults, {
       name: "best-score",
         fruits: 0,
+        miamSprite: "furry",
+        date: undefined,
         text: "",
         textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
           font: "16px arcade",
@@ -107,11 +109,16 @@
     initialize: function(attributes, options) {
       Backbone.Label.prototype.initialize.apply(this, arguments);
 
-      var bestScore = JSON.parse(Backbone.storage[Backbone.LSKEY_BEST_SCORE] || "0");
-      this.set({
-        fruits: bestScore,
-        text: bestScore > 0 ? window._lang.get("bestScore").replace("{0}", bestScore) : ""
-      });
+      var record = JSON.parse(Backbone.storage[Backbone.LSKEY_BEST_SCORE] || "0");
+      if (typeof record != "object") {
+        record = {
+          fruits: record,
+          miamSprite: "furry",
+          date: undefined
+        };
+      }
+      this.set(record);
+      this.set({text: record.fruits > 0 ? window._lang.get("bestScore").replace("{0}", record.fruits) : ""});
 
       this.listenTo(this.world, "change:state", this.updateScore);
     },
@@ -122,9 +129,11 @@
       if (state == "pause" && newScore > bestScore) {
         this.set({
           fruits: newScore,
+          miamSprite: this.world.getHero().get("name"),
+          date: new Date(),
           text: newScore > 0 ? window._lang.get("bestScore").replace("{0}", newScore) : ""
         });
-        Backbone.storage[Backbone.LSKEY_BEST_SCORE] = JSON.stringify(newScore);
+        Backbone.storage[Backbone.LSKEY_BEST_SCORE] = JSON.stringify(this.pick(["fruits", "miamSprite", "date"]));
       }
       return this;
     }
