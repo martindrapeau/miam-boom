@@ -85,7 +85,7 @@
 
       b.textContextAttributes.font = Math.floor(frame.height*0.3) + "px arcade";
       b.text = fruits;
-      b.y += Math.floor(frame.height*0.16);
+      b.y += Math.floor(frame.height*0.17);
       this.drawText(b, context, options);
 
       b.textContextAttributes.font = Math.floor(frame.height*0.15) + "px arcade";

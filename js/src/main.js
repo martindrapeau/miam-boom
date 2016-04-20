@@ -224,6 +224,9 @@ window.START = function() {
         this.shareButton.show();
         this.configButton.show();
       });
+      this.listenTo(this.engine, "pulse-share-button", function() {
+        this.shareButton.growShrink();
+      });
 
 
       // Get things going

@@ -58,9 +58,14 @@
       });
     },
     ready: function() {
+      var key = readyKeys.next();
+      if (_.indexOf(beatBestKeys, this.get("text")) >= 0) {
+        key = "shareYourNewBest";
+        this.engine.trigger("pulse-share-button");
+      }
       this.set({
         state: "ready",
-        text: window._lang.get(readyKeys.next())
+        text: window._lang.get(key)
       });
       this.fadeIn();
     },
@@ -76,14 +81,14 @@
       if (options.start) {
         key = "touchToStart";
       }
+      else if (score > 10 && score > best) {
+        key = beatBestKeys.next();
+      }
       else if (heroState == "dead") {
         key = deadKeys.next();
       }
       else {
-        if (score > best) {
-          key = beatBestKeys.next();
-        }
-        else if (score == 0) {
+        if (score == 0) {
           key = failKeys.next();
         }
         else if (score >= 50 && score < 60) {
