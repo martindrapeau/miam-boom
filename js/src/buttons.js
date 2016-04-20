@@ -52,6 +52,11 @@
       height: 70,
       img: "#artifacts", imgUrl: "img/artifacts.png",
       imgX: 70, imgY: 180, imgWidth: 70, imgHeight: 70,
+      text: "",
+      textPadding: 0,
+      textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
+        font: "48px arcade",
+      }),
       easingTime: 250
     }),
     initialize: function(attributes, options) {
@@ -59,11 +64,15 @@
 
       options || (options = {});
       this.world = options.world;
+      this.panel = options.panel;
 
       this.on('tap', this.onPressed);
     },
     onPressed: function(e) {
-      alert(window._lang.get("notYetImplemented"));
+      if (this.panel.get("opacity"))
+        this.panel.hide();
+      else
+        this.panel.show();
     }
   });
 

@@ -123,6 +123,14 @@ window.START = function() {
       });
       Backbone.adjustLabelSize(this.titleLabel);
 
+      this.panel = new Backbone.Panel({
+        x: Backbone.WIDTH*0.5 - Backbone.Panel.prototype.defaults.width*0.5,
+        y: Backbone.HEIGHT*0.5 - Backbone.Panel.prototype.defaults.height*0.5,
+        opacity: 0
+      }, {
+        world: this.world
+      });
+
       this.miamButton = new Backbone.MiamButton({
         x: Backbone.WIDTH*0.10,
         y: Backbone.HEIGHT*0.08,
@@ -132,7 +140,7 @@ window.START = function() {
       });
 
       this.configButton = new Backbone.ConfigButton({
-        x: Backbone.WIDTH*0.90 - Backbone.ShareButton.prototype.defaults.width,
+        x: Backbone.WIDTH*0.90 - Backbone.ConfigButton.prototype.defaults.width,
         y: Backbone.HEIGHT*0.08,
         opacity: 0
       }, {
@@ -140,11 +148,12 @@ window.START = function() {
       });
 
       this.shareButton = new Backbone.ShareButton({
-        x: Backbone.WIDTH*0.50 - Backbone.ConfigButton.prototype.defaults.width/2,
+        x: Backbone.WIDTH*0.50 - Backbone.ShareButton.prototype.defaults.width/2,
         y: Backbone.HEIGHT*0.08,
         opacity: 0
       }, {
-        world: this.world
+        world: this.world,
+        panel: this.panel
       });
 
 
@@ -166,7 +175,7 @@ window.START = function() {
         debugPanel: this.debugPanel
       });
 
-      this.engine.add([this.ai, this.world, this.miamButton, this.shareButton, this.configButton]);
+      this.engine.add([this.ai, this.world, this.miamButton, this.configButton, this.panel, this.shareButton]);
       if (this.debugPanel) this.engine.add(this.debugPanel);
 
       this.listenTo(this.engine, "change:music", function() {
@@ -223,36 +232,40 @@ window.START = function() {
     },
     pause: function(options) {
       options || (options = {});
+
       this.world.set("state", "pause");
+
       if (options.start) {
         this.miamButton.hide();
         this.shareButton.hide();
         this.configButton.hide();
         this.titleLabel.show(options);
-        this.listenTo(this.message, "change:state", function() {
-          if (this.message.get("state") == "ready") {
-            this.miamButton.show();
-            this.shareButton.show();
-            this.configButton.show();
-            this.stopListening(this.message, "change:state");
-            this.listenTo(this.engine, "touchstart", this.onTouchToStart);
-          }
-        }.bind(this));
       }
       else {
         this.message.show(options);
-        this.miamButton.show();
-        this.shareButton.show();
-        this.configButton.show();
-        this.listenTo(this.engine, "touchstart", this.onTouchToStart);
       }
+
+      this.listenTo(this.message, "change:state", function() {
+        if (this.message.get("state") == "ready") {
+          this.miamButton.show();
+          this.configButton.show();
+          this.shareButton.show();
+          this.stopListening(this.message, "change:state");
+          this.listenTo(this.engine, "touchstart", this.onTouchToStart);
+        }
+      }.bind(this));
     },
     onTouchToStart: function(e) {
       if (e && e.canvasY < this.message.get("y")) return;
+      if (this.panel.get("opacity") && e) {
+        if (e.canvasY > this.panel.getBottom()) this.panel.hide();
+        return;
+      }
       this.stopListening(this.engine, "touchstart", this.onTouchToStart);
       this.setup();
       this.message.hide();
       this.miamButton.hide();
+      this.panel.hide();
       this.shareButton.hide();
       this.configButton.hide();
     },
@@ -267,6 +280,10 @@ window.START = function() {
         if (name == "bomb") {
           hero.set("state", "dead");
           this.ai.stop();
+          this.panel.set({
+            fruits: this.world.get("fruits"),
+            miam: this.world.getHero().get("name")
+          });
           this.world.setTimeout(this.pause.bind(this), 1500);
         } else {
           var fruits = this.world.get("fruits") + 1;
@@ -284,6 +301,10 @@ window.START = function() {
       if (name != "bomb") {
         hero.set("state", "sad");
         this.ai.stop();
+        this.panel.set({
+          fruits: this.world.get("fruits"),
+          miam: this.world.getHero().get("name")
+        });
         this.world.setTimeout(this.pause.bind(this), 1500);
       }
     },

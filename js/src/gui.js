@@ -130,44 +130,6 @@
     }
   });
 
-  Backbone.Panel = Backbone.Label.extend({
-    defaults: _.extend({}, Backbone.Label.prototype.defaults, {
-      x: 0,
-      y: 0,
-      width: 320,
-      height: Backbone.HEIGHT/2,
-      backgroundColor: "#000",
-      opacity: 0.8,
-      text: "",
-      easing: "easeInCubic",
-      easingTime: 400
-    }),
-    initialize: function(attributes, options) {
-      Backbone.Label.prototype.initialize.apply(this, arguments);
-      this.set({
-        y: -Backbone.HEIGHT/2,
-        showX: 0,
-        showY: 0,
-        hideX: 0,
-        hideY: -Backbone.HEIGHT/2,
-        width: Backbone.WIDTH,
-        height: Backbone.HEIGHT/2
-      });
-      _.bindAll(this, "show", "hide");
-    },
-    show: function(callback) {
-      this.moveTo(this.get("showX"), this.get("showY"), callback);
-      return this;
-    },
-    hide: function(callback) {
-      this.moveTo(this.get("hideX"), this.get("hideY"), callback);
-      return this;
-    },
-    onRender: function(context, options) {
-
-    }
-  });
-
   Backbone.Scene = Backbone.Label.extend({
     defaults: _.extend({}, Backbone.Label.prototype.defaults, {
       x: 0,

@@ -90,7 +90,11 @@
       pleaseWait: "Please wait...",
       error: "Error",
       errorWithMessage: "Error: {0}",
-      notYetImplemented: "Not yet implemented"
+      notYetImplemented: "Not yet implemented",
+      share: "Share",
+      iCaught: "I caught",
+      fruits: "fruits",
+      fruit: "fruit"
     }
   };
   
