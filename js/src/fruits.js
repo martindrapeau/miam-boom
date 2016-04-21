@@ -133,27 +133,15 @@
         this.world.remove(this);
       }.bind(this));
 
-      var cls = _.classify(this.get("explodeSprite"));
+      var name = this.get("explodeSprite");
+      if (!name) return;
 
+      var cls = _.classify(name);
       this.world.add(new Backbone[cls]({
         x: this.get("x") + this.get("width")/2 - Backbone[cls].prototype.defaults.width/2,
         y: this.get("y")
       }));
-    }/*,
-    onUpdate: function(dt) {
-      if (!this._logged1) {
-        this._logged1 = true;
-        var now = _.now();
-        console.log(this.id, this.get("x"), this.get("velocity"), now);
-        console.log(this.id, this.get("y"), this.get("yVelocity"), fallAcceleration, now);
-      } else if (!this._logged2 && this.get("y") > this.world.getHero().get("y")) {
-        this._logged2 = true;
-        var now = _.now();
-        console.log(this.id, this.get("x"), this.get("velocity"), now);
-        console.log(this.id, this.get("y"), this.get("yVelocity"), fallAcceleration, now);
-      }
-      return true;
-    }*/
+    }
   });
 
   function createFruit(name, sequences) {

@@ -181,6 +181,7 @@
           });
 
           this.world.add(fruit);
+          this.heuristics._maybeAttachStar.call(this, fruit);
         }
 
         this.heuristics._delayThrowRandom.call(this);
@@ -238,6 +239,7 @@
           });
 
           this.world.add(fruit);
+          this.heuristics._maybeAttachStar.call(this, fruit);
         }
 
         this.heuristics._delayThrowRandom.call(this);
@@ -266,6 +268,7 @@
           });
 
           this.world.add(fruit);
+          this.heuristics._maybeAttachStar.call(this, fruit);
         }
 
         this.heuristics._delayThrowRandom.call(this);
@@ -297,9 +300,30 @@
           });
 
           this.world.add(fruit);
+          this.heuristics._maybeAttachStar.call(this, fruit);
         }
 
         this.heuristics._delayThrowRandom.call(this);
+      },
+      _maybeAttachStar: function(fruit) {
+        if (fruit.get("name") != "bomb") return;
+
+        var cur = fruit.getStateInfo(),
+            x = fruit.get("x"),
+            y = fruit.get("y"),
+            state = fruit.get("state"),
+            yVelocity = fruit.get("yVelocity"),
+            deltaX = fruit.getWidth() * (cur.dir == "left" ? 1 : -1),
+            height = fruit.getHeight(),
+            deltaY = height - Math.round(height * 2 * Math.random());
+
+        var star = new Backbone.Star({
+          x: x + deltaX,
+          y: y + deltaY,
+          state: state,
+          yVelocity: yVelocity
+        });
+        this.world.add(star);
       }
     }
   });

@@ -60,17 +60,18 @@
   }
 
   Backbone.adjustSizes = function() {
+    var allFruitNames = _.union(Backbone.fruitNames, ["Star"]);
     var classes = _.union(
       [
         "Miam", "Furry", "Pinky", "Garfield",
-        "Boom", "Fruit", "Splat", 
+        "Boom", "Fruit", "Splat", "Puff",
         "Floor",
         "Label", "TitleLabel", "ScoreLabel", "BestScoreLabel", "Message",
         "MiamButton", "ShareButton", "ConfigButton",
         "Scene", "Panel", "ConfigPanel", "BigShareButton"
       ],
-      _.map(Backbone.fruitNames, function(fruitName) {return _.classify(fruitName); }),
-      _.map(Backbone.fruitNames, function(fruitName) {return _.classify(Backbone[_.classify(fruitName)].prototype.defaults.explodeSprite); })
+      _.map(allFruitNames, function(fruitName) {return _.classify(fruitName); }),
+      _.map(allFruitNames, function(fruitName) {return _.classify(Backbone[_.classify(fruitName)].prototype.defaults.explodeSprite); })
     );
     _.each(classes, function(className) {
       adjustDefaultsToRatio(Backbone[className]);
@@ -79,7 +80,7 @@
     Backbone.Floor.prototype.defaults.height = Math.round(Backbone.HEIGHT*0.22);
 
     var keys = ["velocity", "yVelocity", "yAcceleration"];
-    _.each(Backbone.fruitNames, function(fruitName) {
+    _.each(allFruitNames, function(fruitName) {
       var className = _.classify(fruitName);
       _.each(Backbone[className].prototype.animations, function(animation) {
         _.each(keys, function(key) {

@@ -46,6 +46,15 @@
     tileColumns: 1,
     tileRows: 1
   }, {
+    id: "boom",
+    img: "#artifacts", imgUrl: "img/artifacts.png",
+    x: 540,
+    y: 180,
+    tileWidth: 160,
+    tileHeight: 90,
+    tileColumns: 1,
+    tileRows: 1
+  }, {
     id: "cupcake",
     img: "#artifacts", imgUrl: "img/artifacts.png",
     x: 540,
@@ -55,11 +64,20 @@
     tileColumns: 1,
     tileRows: 1
   }, {
-    id: "boom",
+    id: "star",
     img: "#artifacts", imgUrl: "img/artifacts.png",
-    x: 540,
-    y: 180,
-    tileWidth: 160,
+    x: 630,
+    y: 0,
+    tileWidth: 90,
+    tileHeight: 90,
+    tileColumns: 1,
+    tileRows: 1
+  }, {
+    id: "puff",
+    img: "#artifacts", imgUrl: "img/artifacts.png",
+    x: 0,
+    y: 540,
+    tileWidth: 90,
     tileHeight: 90,
     tileColumns: 1,
     tileRows: 1

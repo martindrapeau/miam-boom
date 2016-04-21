@@ -321,10 +321,6 @@ window.START = function() {
         if (name == "bomb") {
           hero.set("state", "dead");
           this.ai.stop();
-          this.panel.set({
-            fruits: this.world.get("fruits"),
-            miam: this.world.getHero().get("name")
-          });
           this.world.setTimeout(this.pause.bind(this), 1500);
         } else {
           var fruits = this.world.get("fruits") + 1;
@@ -339,7 +335,7 @@ window.START = function() {
 
       if (type != "fruit" || !hero || hero.isDisabled()) return;
 
-      if (name != "bomb") {
+      if (name != "bomb" && name != "star") {
         hero.set("state", "sad");
         this.ai.stop();
         this.panel.set({
