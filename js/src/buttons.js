@@ -69,6 +69,9 @@
     },
     onPressed: function(e) {
       this.engine.trigger("show-panel");
+    },
+    onUpdate: function(dt) {
+      return true;
     }
   });
 

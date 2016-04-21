@@ -58,21 +58,22 @@
       });
     },
     ready: function() {
-      var key = readyKeys.next();
-      if (_.indexOf(beatBestKeys, this.get("text")) >= 0) {
-        key = "shareYourNewBest";
-        this.engine.trigger("pulse-share-button");
-      }
+      var best = this.bestScoreLabel.get("prevFruits"),
+          score = this.scoreLabel.get("fruits"),
+          key = score > best ? "shareYourNewBest" : readyKeys.next()
+
       this.set({
         state: "ready",
         text: window._lang.get(key)
       });
-      this.fadeIn();
+      this.fadeIn(function() {
+        if (score > best) this.engine.trigger("pulse-share-button");
+      }.bind(this));
     },
     findBestLabel: function(options) {
       options || (options = {});
 
-      var best = this.bestScoreLabel.get("fruits"),
+      var best = this.bestScoreLabel.get("prevFruits"),
           score = this.scoreLabel.get("fruits"),
           key = "youDroppedAFruit",
           hero = this.world.getHero(),

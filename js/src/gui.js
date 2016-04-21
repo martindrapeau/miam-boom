@@ -118,7 +118,10 @@
         };
       }
       this.set(record);
-      this.set({text: record.fruits > 0 ? window._lang.get("bestScore").replace("{0}", record.fruits) : ""});
+      this.set({
+        text: record.fruits > 0 ? window._lang.get("bestScore").replace("{0}", record.fruits) : "",
+        prevFruits: record.fruits
+      });
 
       this.listenTo(this.world, "change:state", this.updateScore);
     },
@@ -129,6 +132,7 @@
       if (state == "pause" && newScore > bestScore) {
         this.set({
           fruits: newScore,
+          prevFruits: bestScore,
           miamSprite: this.world.getHero().get("name"),
           date: new Date(),
           text: newScore > 0 ? window._lang.get("bestScore").replace("{0}", newScore) : ""
