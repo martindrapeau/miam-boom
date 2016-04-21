@@ -275,7 +275,7 @@
       _delayThrowRandom: function() {
         var fruits = this.world.get("fruits"),
             startDelay = Math.max(150, 400 - fruits),
-            deltaDelay = Math.max(500, 1500 - fruits * 5),
+            deltaDelay = Math.max(500, 1500 - fruits * 7),
             delay = Math.floor(startDelay + deltaDelay*Math.random());
         this._throwTime = _.now();
         this._throwDelay = delay;
