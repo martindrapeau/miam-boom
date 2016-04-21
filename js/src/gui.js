@@ -61,10 +61,16 @@
       this.music = options.music;
     },
     show: function() {
-      if (this.get("opacity") != 1) this.fadeIn();
+      if (this.get("opacity") != 1) {
+        this.fadeIn();
+        this.trigger("show");
+      }
     },
     hide: function() {
-      if (this.get("opacity")) this.fadeOut();
+      if (this.get("opacity")) {
+        this.fadeOut();
+        this.trigger("hide");
+      }
     }
   });
 

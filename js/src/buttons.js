@@ -21,7 +21,7 @@
       var miam = JSON.parse(Backbone.storage[Backbone.LSKEY_MIAM] || JSON.stringify(this.miams[0]));
       this.set({miamSprite: miam});
 
-      this.on('tap', this.onPressed);
+      this.on("tap", this.onPressed);
     },
     onPressed: function(e) {
       var miam = this.get("miamSprite"),
@@ -57,20 +57,38 @@
       textContextAttributes: _.extend({}, Backbone.Label.prototype.defaults.textContextAttributes, {
         font: "48px arcade",
       }),
-      easingTime: 250
+      easingTime: 250,
+      pulseDelay: 0
     }),
     initialize: function(attributes, options) {
       Backbone.Button.prototype.initialize.apply(this, arguments);
 
+      this._lastPulseTime = 0;
+
       options || (options = {});
       this.world = options.world;
 
-      this.on('tap', this.onPressed);
+      this.on("tap", this.onPressed);
+      this.on("show", this.onShowHide);
+      this.on("hide", this.onShowHide);
     },
     onPressed: function(e) {
       this.engine.trigger("show-panel");
     },
+    onShowHide: function() {
+      this.set({pulseDelay: 0});
+    },
     onUpdate: function(dt) {
+      var pulseDelay = this.get("pulseDelay"),
+          now = _.now();
+      if (pulseDelay && now > this._lastPulseTime + pulseDelay && !this.isAnimated()) {
+        this._lastPulseTime = now;
+        _.defer(function() {
+          this.growShrink(function() {
+            this.growShrink();
+          });
+        }.bind(this));
+      }
       return true;
     }
   });
@@ -91,7 +109,7 @@
       options || (options = {});
       this.world = options.world;
 
-      this.on('tap', this.onPressed);
+      this.on("tap", this.onPressed);
     },
     onPressed: function(e) {
       this.engine.trigger("show-config-panel");

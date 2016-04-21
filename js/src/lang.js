@@ -46,6 +46,7 @@
       notBad: "Not Bad!",
       youAreIncredible: "You are incredible!",
       shareYourNewBest: "Share your new best",
+      shareYourAchievement: "Share your achievement",
       betterNextTime: "Better luck next time",
       practiceMakesPerfect: "Practice makes perfect!",
       aBabyCouldDoBetter: "A baby could do better!",

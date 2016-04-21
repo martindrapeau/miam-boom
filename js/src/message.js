@@ -41,6 +41,7 @@
 
       this.bestScoreInSession = 0;
       this.lastScore = 0;
+      this.readyCount = 0;
     },
     show: function(options) {
       options || (options = {});
@@ -56,18 +57,25 @@
             this.fadeOut(options.interlude ? undefined : this.ready);
           });
       });
+      this.trigger("show");
     },
     ready: function() {
       var best = this.bestScoreLabel.get("prevFruits"),
           score = this.scoreLabel.get("fruits"),
-          key = score > best ? "shareYourNewBest" : readyKeys.next()
+          key = score > best ? "shareYourNewBest" : readyKeys.next();
+
+      this.readyCount += 1;
+      if (key != "shareYourNewBest" && score >= 10 && this.readyCount % 3 == 0) {
+        key = "shareYourAchievement";
+      }
 
       this.set({
         state: "ready",
         text: window._lang.get(key)
       });
       this.fadeIn(function() {
-        if (score > best) this.engine.trigger("pulse-share-button");
+        if (key == "shareYourNewBest" || key == "shareYourAchievement")
+          this.engine.trigger("pulse-share-button");
       }.bind(this));
     },
     findBestLabel: function(options) {
