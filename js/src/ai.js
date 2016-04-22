@@ -1,7 +1,7 @@
 (function() {
 
 
-  var heuristicNames = ["random", "rain", "random", "up", "random", "rainleft", "up", "random", "rainleft"];
+  var heuristicNames = ["random", "rain", "random", "up", "random", "rainleft", "up", "random", "rainright"];
   heuristicNames.index = 0;
   heuristicNames.next = function() {
     var index = this.index;
@@ -80,7 +80,7 @@
 
       state = this.get("state");
       this._stateChangeTime = _.now();
-      this._stateChangeDelay = state == "idle" ? (options.bonus ? 1000 : 2000) : (state == "sirup" ? 8000 : 15000);
+      this._stateChangeDelay = state == "idle" ? (options.bonus ? 700 : 2000) : (state == "sirup" ? 8000 : 15000);
       this._nextStateIsBonus = options.bonus;
     },
     throwFruit: function(options) {
