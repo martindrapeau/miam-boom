@@ -90,6 +90,9 @@
       if (options.start) {
         key = "touchToStart";
       }
+      else if (options.bonus) {
+        key = "bonusRound";
+      }
       else if (score > 10 && score > best) {
         key = beatBestKeys.next();
       }

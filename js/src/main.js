@@ -322,7 +322,11 @@ window.START = function() {
           hero.set("state", "dead");
           this.ai.stop();
           this.world.setTimeout(this.pause.bind(this), 1500);
-        } else {
+        }
+        else if (name == "star") {
+          this.ai.bonus();
+        }
+        else {
           var fruits = this.world.get("fruits") + 1;
           this.world.set("fruits", fruits);
         }

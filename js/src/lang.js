@@ -96,7 +96,8 @@
       share: "Share",
       iCaught: "I caught",
       fruits: "fruits",
-      fruit: "fruit"
+      fruit: "fruit",
+      bonusRound: "Bonus round!"
     }
   };
   

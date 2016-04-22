@@ -1,7 +1,7 @@
 (function() {
 
 
-  var heuristicNames = ["random", "rain", "sirup", "random", "up"];
+  var heuristicNames = ["random", "rain", "random", "up", "random", "rainleft", "up", "random", "rainleft"];
   heuristicNames.index = 0;
   heuristicNames.next = function() {
     var index = this.index;
@@ -17,7 +17,8 @@
   Backbone.Ai = Backbone.Model.extend({
     defaults: {
       name: "ai",
-      state: "idle"
+      state: "idle",
+      round: 0
     },
     initialize: function(attributes, options) {
       options || (options = {});
@@ -37,7 +38,7 @@
       this._sirupX = this._sirupDir = undefined;
     },
     start: function(options) {
-      this.set({state: "idle"});
+      this.set({state: "idle", round: 0});
       this.throwFruit(options);
       this.changeState(options);
     },
@@ -47,24 +48,45 @@
       this._stateChangeDelay = undefined;
       heuristicNames.reset();
     },
+    bonus: function() {
+      this.world.sprites.each(function(sprite) {
+        if (sprite.get("type") == "fruit") {
+          _.delay(function() {
+            this.world.remove(sprite);
+          }.bind(this));
+
+          this.world.add(new Backbone.Puff({
+            x: sprite.get("x") + sprite.get("width")/2 - Backbone.Puff.prototype.defaults.width/2,
+            y: sprite.get("y")
+          }));
+        }
+      }.bind(this));
+      this.changeState({bonus: true});
+    },
+    changeState: function(options) {
+      options || (options = {});
+      var state = this.get("state"),
+          round = this.get("round");
+
+      if (!options.skip) {
+        var newState = this._nextStateIsBonus ? "sirup" : (state == "idle" ? heuristicNames.next() : "idle");
+        this.set({
+          state: newState,
+          starCountInState: 0,
+          round: newState != "idle" ? round+1 : round
+        });
+        this.throwFruit(options);
+      }
+
+      state = this.get("state");
+      this._stateChangeTime = _.now();
+      this._stateChangeDelay = state == "idle" ? (options.bonus ? 1000 : 2000) : (state == "sirup" ? 8000 : 15000);
+      this._nextStateIsBonus = options.bonus;
+    },
     throwFruit: function(options) {
       var state = this.get("state"),
           fn = this.heuristics[state];
       if (typeof fn == "function") return fn.apply(this, arguments);
-    },
-    changeState: function(options) {
-      options || (options = {});
-
-      if (!options.skip) {
-        var state = this.get("state"),
-            index = state == "idle" ? Math.floor((heuristicNames.length-0.01)*Math.random()) : null,
-            newState = index != null ? heuristicNames.next() : "idle";
-        this.set({state: newState});
-        this.throwFruit();
-      }
-
-      this._stateChangeTime = _.now();
-      this._stateChangeDelay = this.get("state") == "idle" ? 2000 : 15000;
     },
     update: function(dt) {
       var now = _.now();
@@ -87,8 +109,8 @@
         this._throwDelay = undefined;
         if (!options.start && this.world.get("fruits") > 0) {
           var fruits = this.world.sprites.where({type: "fruit"});
-          if (fruits.length == 0) {
-            this.message.show({interlude: true});
+          if (fruits.length == 0 || options.bonus) {
+            this.message.show(_.extend({interlude: true}, options));
           } else {
             this._throwTime = _.now();
             this._throwDelay = 250;
@@ -99,9 +121,10 @@
         options || (options = {});
 
         if (!options.skip) {
+
           var hero = this.world.getHero(),
               index = Math.floor((Backbone.fruitNames.length-0.01)*Math.random()),
-              fruitName = Backbone.fruitNames[index],
+              fruitName = options.fruitName ? options.fruitName : Backbone.fruitNames[index],
               fruitClass = Backbone[_.classify(fruitName)],
               halfWidth = fruitClass.prototype.defaults.width/2,
               dir, x, y, state, yVelocity, d, t, proj,
@@ -181,10 +204,10 @@
           });
 
           this.world.add(fruit);
-          this.heuristics._maybeAttachStar.call(this, fruit);
+          this.heuristics._maybeThrowStar.call(this, fruit);
         }
 
-        this.heuristics._delayThrowRandom.call(this);
+        if (!options.noThrow) this.heuristics._delayThrowRandom.call(this);
       },
       sirup: function(options) {
         options || (options = {});
@@ -225,8 +248,9 @@
         options || (options = {});
 
         if (!options.skip) {
+
           var index = Math.floor((Backbone.fruitNames.length-0.01)*Math.random()),
-              fruitName = Backbone.fruitNames[index],
+              fruitName = options.fruitName ? options.fruitName : Backbone.fruitNames[index],
               fruitClass = Backbone[_.classify(fruitName)],
               x = Backbone.WIDTH*0.10 + Math.round(Math.random() * (Backbone.WIDTH*0.80 - fruitClass.prototype.defaults.width)),
               dir = Math.random() < 0.5 ? "right" : "left";
@@ -239,10 +263,10 @@
           });
 
           this.world.add(fruit);
-          this.heuristics._maybeAttachStar.call(this, fruit);
+          this.heuristics._maybeThrowStar.call(this, fruit);
         }
 
-        this.heuristics._delayThrowRandom.call(this);
+        if (!options.noThrow) this.heuristics._delayThrowRandom.call(this);
       },
       rainleft: function(options) {
         return this.heuristics._raindir.call(this, "left", options);
@@ -254,24 +278,25 @@
         options || (options = {});
 
         if (!options.skip) {
+
           var index = Math.floor((Backbone.fruitNames.length-0.01)*Math.random()),
-              fruitName = Backbone.fruitNames[index],
+              fruitName = options.fruitName ? options.fruitName : Backbone.fruitNames[index],
               fruitClass = Backbone[_.classify(fruitName)],
-              x = Backbone.WIDTH*0.10 + Math.round(Math.random() * (Backbone.WIDTH*0.80 - fruitClass.prototype.defaults.width)),
-              dir = Math.random() < 0.5 ? "right" : "left";
+              x = Backbone.WIDTH*0.1 + Math.round(Math.random() * (Backbone.WIDTH*0.80 - fruitClass.prototype.defaults.width)),
+              dir = x < Backbone.WIDTH*0.5 ? "right" : "left";
 
           var fruit = new fruitClass({
             x: x,
             y: Backbone.HEIGHT,
-            state: fruitClass.prototype.buildState("fall", "rain", dir),
+            state: fruitClass.prototype.buildState("fall", options.mov2 || "rain", dir),
             yVelocity: -1180*Backbone.RATIO
           });
 
           this.world.add(fruit);
-          this.heuristics._maybeAttachStar.call(this, fruit);
+          this.heuristics._maybeThrowStar.call(this, fruit);
         }
 
-        this.heuristics._delayThrowRandom.call(this);
+        if (!options.noThrow) this.heuristics._delayThrowRandom.call(this);
       },
 
       // Private helpers
@@ -287,6 +312,7 @@
         options || (options = {});
 
         if (!options.skip) {
+
           var index = Math.floor((Backbone.fruitNames.length-0.01)*Math.random()),
               fruitName = Backbone.fruitNames[index],
               fruitClass = Backbone[_.classify(fruitName)],
@@ -300,10 +326,10 @@
           });
 
           this.world.add(fruit);
-          this.heuristics._maybeAttachStar.call(this, fruit);
+          this.heuristics._maybeThrowStar.call(this, fruit);
         }
 
-        this.heuristics._delayThrowRandom.call(this);
+        if (!options.noThrow) this.heuristics._delayThrowRandom.call(this);
       },
       _maybeAttachStar: function(fruit) {
         if (fruit.get("name") != "bomb") return;
@@ -324,6 +350,17 @@
           yVelocity: yVelocity
         });
         this.world.add(star);
+      },
+      _maybeThrowStar: function(fruit) {
+        if (fruit.get("name") == "star" ||
+            Math.round(Math.random()*20) != 5 ||
+            this.get("round") < 2) return;
+
+        var starCountInState = this.get("starCountInState");
+        if (starCountInState > 0) return;
+
+        this.heuristics.up.call(this, {fruitName: "star", noThrow: true, mov2: "star"});
+        this.set({starCountInState: starCountInState + 1});
       }
     }
   });

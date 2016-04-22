@@ -81,6 +81,9 @@
   animations["fall-rain2-left"] = _.extend({}, animations["fall-left"], {velocity: -walkVelocity*0.50, yVelocity: fallVelocity*0.75});
   animations["fall-rain2-right"] = _.extend({}, animations["fall-right"], {velocity: walkVelocity*0.50, yVelocity: fallVelocity*0.75});
 
+  animations["fall-star-left"] = _.extend({}, animations["fall-left"], {velocity: -walkVelocity*0.10});
+  animations["fall-star-right"] = _.extend({}, animations["fall-right"], {velocity: walkVelocity*0.10});
+
   Backbone.Fruit = Backbone.Character.extend({
     defaults: _.extend({}, Backbone.Character.prototype.defaults, {
       type: "fruit",

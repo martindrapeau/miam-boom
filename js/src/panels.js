@@ -25,7 +25,7 @@
       width: 270,
       height: 270,
       img: "#artifacts", imgUrl: "img/artifacts.png",
-      imgX: 270, imgY: 180, imgWidth: 270, imgHeight: 270,
+      imgX: 720, imgY: 0, imgWidth: 270, imgHeight: 270,
       backgroundColor: "transparent",
       opacity: 1.0,
       text: "",
